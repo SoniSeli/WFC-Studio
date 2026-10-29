@@ -36,7 +36,7 @@ WFC-Studio/
 │  └─ Tests/Editor/             WfcStudio.Tests: EditMode tests
 ├─ Assets/Demo/                 Demo scene: UI Toolkit panel, live generation, entropy heatmap
 ├─ Assets/Samples/PunyWorld/    Sample tile sets: Meadow, Lake, Forest, Mountain, Castle, Overworld
-├─ Assets/Dev/Editor/           Tools that rebuild the samples and demo scene from code, and make WebGL builds
+├─ Assets/Dev/Editor/           Tools that rebuild the samples and demo scene from code, measure them, and make WebGL builds
 ├─ Assets/Tests/Editor/         Tests that every sample validates and generates
 └─ .github/workflows/           CI: EditMode tests on every push to main
 ```

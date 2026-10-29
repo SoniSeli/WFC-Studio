@@ -27,8 +27,14 @@ namespace WfcStudio.Dev
         // Outer edge of every feature. It faces grass but never another border, so features always have grass between them.
         const string Border = "border";
 
+        // Top of a mountain plateau. Kept separate from grass so every cell knows whether it is inside a plateau: with plain
+        // grass inside, nothing told the ring's two sides where to meet, and most mountain maps needed hundreds of backtracks.
+        const string Plateau = "plateau";
+        const string Summit = "summit";
+        const string TerraceBorder = "terrace-border";
+
         // Biomes that may grow to any size but never smaller than 3x3 (2x2 blobs look like stamps).
-        static readonly string[] GrowingBiomes = { "Lake", "Forest", "Mountain" };
+        static readonly string[] GrowingBiomes = { "Lake", "Forest", "Mountain", "Terrace" };
 
         // A tile cut from the sheet. Rows are counted from the top of the sheet. Sockets go up, right, down, left.
         readonly struct TileDef
@@ -74,21 +80,34 @@ namespace WfcStudio.Dev
         // often features appear; a side piece versus the corner that would end it sets how long the sides grow; and the
         // centre weight fills the inside. With interior = Grass there is no centre tile: meadow tiles (and smaller
         // features) fill the inside instead.
-        static IEnumerable<TileDef> Blob(string biome, string socket, int column, int row, float cornerWeight, float sideWeight, float centreWeight, string interior)
+        static IEnumerable<TileDef> Blob(string biome, string socket, int column, int row, float cornerWeight, float sideWeight, float centreWeight, string interior, string outer = Border)
         {
             string top = socket + "-top", bottom = socket + "-bottom", left = socket + "-left", right = socket + "-right";
             int c = column, r = row;
 
-            yield return new TileDef(biome + " Top Left", c, r, cornerWeight, Border, top, left, Border);
-            yield return new TileDef(biome + " Top", c + 1, r, sideWeight, Border, top, interior, top);
-            yield return new TileDef(biome + " Top Right", c + 2, r, cornerWeight, Border, Border, right, top);
-            yield return new TileDef(biome + " Left", c, r + 1, sideWeight, left, interior, left, Border);
+            yield return new TileDef(biome + " Top Left", c, r, cornerWeight, outer, top, left, outer);
+            yield return new TileDef(biome + " Top", c + 1, r, sideWeight, outer, top, interior, top);
+            yield return new TileDef(biome + " Top Right", c + 2, r, cornerWeight, outer, outer, right, top);
+            yield return new TileDef(biome + " Left", c, r + 1, sideWeight, left, interior, left, outer);
             if (interior != Grass)
                 yield return new TileDef(biome + " Centre", c + 1, r + 1, centreWeight, interior, interior, interior, interior);
-            yield return new TileDef(biome + " Right", c + 2, r + 1, sideWeight, right, Border, right, interior);
-            yield return new TileDef(biome + " Bottom Left", c, r + 2, cornerWeight, left, bottom, Border, Border);
-            yield return new TileDef(biome + " Bottom", c + 1, r + 2, sideWeight, interior, bottom, Border, bottom);
-            yield return new TileDef(biome + " Bottom Right", c + 2, r + 2, cornerWeight, right, Border, Border, bottom);
+            yield return new TileDef(biome + " Right", c + 2, r + 1, sideWeight, right, outer, right, interior);
+            yield return new TileDef(biome + " Bottom Left", c, r + 2, cornerWeight, left, bottom, outer, outer);
+            yield return new TileDef(biome + " Bottom", c + 1, r + 2, sideWeight, interior, bottom, outer, bottom);
+            yield return new TileDef(biome + " Bottom Right", c + 2, r + 2, cornerWeight, right, outer, outer, bottom);
+        }
+
+        // Concave corners, where a ring's top edge steps up or its bottom edge steps down. They let the ring bend instead of
+        // being a strict rectangle, so its sides no longer have to end on the same row or column to close. The sockets come
+        // from the sheet's edge pixels: each piece continues the rim, side or cliff profile of the outer ring it joins.
+        static IEnumerable<TileDef> InnerCorners(string biome, string socket, int column, int row, float weight, string interior)
+        {
+            string top = socket + "-top", bottom = socket + "-bottom", left = socket + "-left", right = socket + "-right";
+
+            yield return new TileDef(biome + " Inner Top Left", column, row, weight, left, interior, interior, top);
+            yield return new TileDef(biome + " Inner Top Right", column + 1, row, weight, right, top, interior, interior);
+            yield return new TileDef(biome + " Inner Bottom Left", column, row + 1, weight, interior, interior, left, bottom);
+            yield return new TileDef(biome + " Inner Bottom Right", column + 1, row + 1, weight, interior, bottom, right, interior);
         }
 
         // A structure that only ever appears as exactly 3x3: every inner edge has a socket of its own, used by just the two
@@ -116,7 +135,33 @@ namespace WfcStudio.Dev
 
         static IEnumerable<TileDef> Lake() => Blob("Lake", "lake", 7, 10, 0.06f, 0.15f, 0.5f, "lake");
         static IEnumerable<TileDef> Forest() => Blob("Forest", "forest", 11, 40, 0.06f, 0.2f, 0.8f, "forest");
-        static IEnumerable<TileDef> Mountain() => Blob("Mountain", "mountain", 0, 4, 0.05f, 0.16f, 0f, Grass);
+        // Inner corners are rare: frequent bends turn plateaus into maze-like walls.
+        static IEnumerable<TileDef> Mountain() =>
+            Blob("Mountain", "mountain", 0, 4, 0.07f, 0.16f, 0.5f, Plateau)
+                .Concat(InnerCorners("Mountain", "mountain", 3, 4, 0.01f, Plateau))
+                .Concat(PlateauDecor())
+                .Concat(Terrace());
+
+        // A second, higher plateau that only sits on top of a mountain. Its own border and summit sockets keep every level
+        // distinct. Measured on 200 seeds: letting ordinary features (another mountain, a lake) sit on a plateau brought back
+        // the "inside or outside?" ambiguity one level up, and most mountain maps backtracked again; with a dedicated level
+        // there were no backtracks at all.
+        static IEnumerable<TileDef> Terrace()
+        {
+            foreach (var def in Blob("Terrace", "terrace", 0, 4, 0.05f, 0.14f, 0.4f, Summit, TerraceBorder))
+                yield return def;
+            yield return new TileDef("Summit Tufts", 1, 0, 0.2f, Summit, Summit, Summit, Summit);
+            yield return new TileDef("Summit Tree", 3, 40, 0.1f, Summit, Summit, Summit, Summit);
+        }
+
+        // Meadow decoration on top of plateaus: the same sprites, as separate tiles with the plateau socket.
+        static IEnumerable<TileDef> PlateauDecor()
+        {
+            yield return new TileDef("Plateau Tufts", 1, 0, 0.3f, Plateau, Plateau, Plateau, Plateau);
+            yield return new TileDef("Plateau Flowers", 7, 40, 0.1f, Plateau, Plateau, Plateau, Plateau);
+            yield return new TileDef("Plateau Tree", 3, 40, 0.15f, Plateau, Plateau, Plateau, Plateau);
+            yield return new TileDef("Plateau Bush", 2, 43, 0.08f, Plateau, Plateau, Plateau, Plateau);
+        }
         static IEnumerable<TileDef> Castle() => Fixed3x3("Castle", "castle", 2, 45, 0.03f);
 
         // Forbids the shortcuts that would make a growing biome 2 wide or 2 tall: corner beside corner, and an edge piece
@@ -157,9 +202,11 @@ namespace WfcStudio.Dev
             {
                 var defs = defsOf().ToList();
                 var entries = defs.Select(def => new TileEntry(def.Name, tiles[def.Name], def.Weight, def.Up, def.Right, def.Down, def.Left));
-                var sockets = defs.SelectMany(def => new[] { def.Up, def.Right, def.Down, def.Left })
-                    .Distinct()
-                    .Select(name => name == Border ? new SocketDefinition(Border, false, Grass) : new SocketDefinition(name));
+                var socketNames = defs.SelectMany(def => new[] { def.Up, def.Right, def.Down, def.Left }).Distinct().ToList();
+                var sockets = socketNames.Select(name =>
+                    name == Border ? new SocketDefinition(Border, false, Grass) :
+                    name == TerraceBorder ? new SocketDefinition(TerraceBorder, false, Plateau) :
+                    new SocketDefinition(name));
 
                 var exceptions = new List<AdjacencyException>();
                 foreach (string biome in GrowingBiomes)

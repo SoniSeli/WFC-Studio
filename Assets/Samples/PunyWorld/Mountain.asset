@@ -26,10 +26,32 @@ MonoBehaviour:
   - _name: mountain-left
     _connectsToSelf: 1
     _connectsTo: []
+  - _name: plateau
+    _connectsToSelf: 1
+    _connectsTo: []
   - _name: mountain-right
     _connectsToSelf: 1
     _connectsTo: []
   - _name: mountain-bottom
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: terrace-border
+    _connectsToSelf: 0
+    _connectsTo:
+    - plateau
+  - _name: terrace-top
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: terrace-left
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: summit
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: terrace-right
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: terrace-bottom
     _connectsToSelf: 1
     _connectsTo: []
   _tiles:
@@ -77,7 +99,7 @@ MonoBehaviour:
     _left: grass
   - _name: Mountain Top Left
     _tile: {fileID: 11400000, guid: 9a214feba5c14ae448083a5e7592da56, type: 2}
-    _weight: 0.05
+    _weight: 0.07
     _up: border
     _right: mountain-top
     _down: mountain-left
@@ -87,11 +109,11 @@ MonoBehaviour:
     _weight: 0.16
     _up: border
     _right: mountain-top
-    _down: grass
+    _down: plateau
     _left: mountain-top
   - _name: Mountain Top Right
     _tile: {fileID: 11400000, guid: a6390e1a7250706459c068e887670851, type: 2}
-    _weight: 0.05
+    _weight: 0.07
     _up: border
     _right: border
     _down: mountain-right
@@ -100,19 +122,26 @@ MonoBehaviour:
     _tile: {fileID: 11400000, guid: 14fb695207da27645a8de0a3a3b4766a, type: 2}
     _weight: 0.16
     _up: mountain-left
-    _right: grass
+    _right: plateau
     _down: mountain-left
     _left: border
+  - _name: Mountain Centre
+    _tile: {fileID: 11400000, guid: 1c6f10fb8e9608c45a1bb3b8752bfe5e, type: 2}
+    _weight: 0.5
+    _up: plateau
+    _right: plateau
+    _down: plateau
+    _left: plateau
   - _name: Mountain Right
     _tile: {fileID: 11400000, guid: 6b720d3df4815cd41aab90997aa3c4a1, type: 2}
     _weight: 0.16
     _up: mountain-right
     _right: border
     _down: mountain-right
-    _left: grass
+    _left: plateau
   - _name: Mountain Bottom Left
     _tile: {fileID: 11400000, guid: 6f7474aa13a17c44ab2d7fdd58b2476e, type: 2}
-    _weight: 0.05
+    _weight: 0.07
     _up: mountain-left
     _right: mountain-bottom
     _down: border
@@ -120,17 +149,150 @@ MonoBehaviour:
   - _name: Mountain Bottom
     _tile: {fileID: 11400000, guid: 107be6e573b3f674dbf3abcd9778d5c9, type: 2}
     _weight: 0.16
-    _up: grass
+    _up: plateau
     _right: mountain-bottom
     _down: border
     _left: mountain-bottom
   - _name: Mountain Bottom Right
     _tile: {fileID: 11400000, guid: 6a9e2ae72d5e4f448b5be2ffa21c2e82, type: 2}
-    _weight: 0.05
+    _weight: 0.07
     _up: mountain-right
     _right: border
     _down: border
     _left: mountain-bottom
+  - _name: Mountain Inner Top Left
+    _tile: {fileID: 11400000, guid: 50c5d16ce5be3084193917a5016a26ce, type: 2}
+    _weight: 0.01
+    _up: mountain-left
+    _right: plateau
+    _down: plateau
+    _left: mountain-top
+  - _name: Mountain Inner Top Right
+    _tile: {fileID: 11400000, guid: 998020e0dad0d924a90463a490d15328, type: 2}
+    _weight: 0.01
+    _up: mountain-right
+    _right: mountain-top
+    _down: plateau
+    _left: plateau
+  - _name: Mountain Inner Bottom Left
+    _tile: {fileID: 11400000, guid: 10cddb9ce62209346b3132e9501a6283, type: 2}
+    _weight: 0.01
+    _up: plateau
+    _right: plateau
+    _down: mountain-left
+    _left: mountain-bottom
+  - _name: Mountain Inner Bottom Right
+    _tile: {fileID: 11400000, guid: 8ee1eddbab8c83344997e85e18a0293e, type: 2}
+    _weight: 0.01
+    _up: plateau
+    _right: mountain-bottom
+    _down: mountain-right
+    _left: plateau
+  - _name: Plateau Tufts
+    _tile: {fileID: 11400000, guid: 4baec7d1833ef604cbab98d8a5a72349, type: 2}
+    _weight: 0.3
+    _up: plateau
+    _right: plateau
+    _down: plateau
+    _left: plateau
+  - _name: Plateau Flowers
+    _tile: {fileID: 11400000, guid: 7b010a8e590e7254e944875d7a8f5e28, type: 2}
+    _weight: 0.1
+    _up: plateau
+    _right: plateau
+    _down: plateau
+    _left: plateau
+  - _name: Plateau Tree
+    _tile: {fileID: 11400000, guid: af52ffa26e662c74798751cc05987342, type: 2}
+    _weight: 0.15
+    _up: plateau
+    _right: plateau
+    _down: plateau
+    _left: plateau
+  - _name: Plateau Bush
+    _tile: {fileID: 11400000, guid: 47c862feae2041844a626a78359c71d9, type: 2}
+    _weight: 0.08
+    _up: plateau
+    _right: plateau
+    _down: plateau
+    _left: plateau
+  - _name: Terrace Top Left
+    _tile: {fileID: 11400000, guid: 9d01e8b3246ffc544812b82b3d3e9204, type: 2}
+    _weight: 0.05
+    _up: terrace-border
+    _right: terrace-top
+    _down: terrace-left
+    _left: terrace-border
+  - _name: Terrace Top
+    _tile: {fileID: 11400000, guid: 2181a05436a5c3141ad1bac7d8086fcc, type: 2}
+    _weight: 0.14
+    _up: terrace-border
+    _right: terrace-top
+    _down: summit
+    _left: terrace-top
+  - _name: Terrace Top Right
+    _tile: {fileID: 11400000, guid: 10758a6747d36fe45a0e5a0a26ff37d9, type: 2}
+    _weight: 0.05
+    _up: terrace-border
+    _right: terrace-border
+    _down: terrace-right
+    _left: terrace-top
+  - _name: Terrace Left
+    _tile: {fileID: 11400000, guid: 0bc01a1c357097c43b0738dd3e8afe9b, type: 2}
+    _weight: 0.14
+    _up: terrace-left
+    _right: summit
+    _down: terrace-left
+    _left: terrace-border
+  - _name: Terrace Centre
+    _tile: {fileID: 11400000, guid: 69d5c5d935780724dbb4bdbee0cabd82, type: 2}
+    _weight: 0.4
+    _up: summit
+    _right: summit
+    _down: summit
+    _left: summit
+  - _name: Terrace Right
+    _tile: {fileID: 11400000, guid: 1bcbecf72db8fa64bad2be281cec684b, type: 2}
+    _weight: 0.14
+    _up: terrace-right
+    _right: terrace-border
+    _down: terrace-right
+    _left: summit
+  - _name: Terrace Bottom Left
+    _tile: {fileID: 11400000, guid: 464802722a3c2f543be58fafe9148f22, type: 2}
+    _weight: 0.05
+    _up: terrace-left
+    _right: terrace-bottom
+    _down: terrace-border
+    _left: terrace-border
+  - _name: Terrace Bottom
+    _tile: {fileID: 11400000, guid: 176f9b26bc391e84db477231a1d18280, type: 2}
+    _weight: 0.14
+    _up: summit
+    _right: terrace-bottom
+    _down: terrace-border
+    _left: terrace-bottom
+  - _name: Terrace Bottom Right
+    _tile: {fileID: 11400000, guid: b1835243e34aa2a4682f4fe623b76684, type: 2}
+    _weight: 0.05
+    _up: terrace-right
+    _right: terrace-border
+    _down: terrace-border
+    _left: terrace-bottom
+  - _name: Summit Tufts
+    _tile: {fileID: 11400000, guid: 7de718e42aae91144a708f8f2c0a00a2, type: 2}
+    _weight: 0.2
+    _up: summit
+    _right: summit
+    _down: summit
+    _left: summit
+  - _name: Summit Tree
+    _tile: {fileID: 11400000, guid: f97e54bb1bf1cee4789d5512dca404b6, type: 2}
+    _weight: 0.1
+    _up: summit
+    _right: summit
+    _down: summit
+    _left: summit
   _exceptions:
   - _kind: 0
     _tile: {fileID: 11400000, guid: 9a214feba5c14ae448083a5e7592da56, type: 2}
@@ -156,3 +318,27 @@ MonoBehaviour:
     _tile: {fileID: 11400000, guid: a6390e1a7250706459c068e887670851, type: 2}
     _direction: 3
     _neighbour: {fileID: 11400000, guid: 6a9e2ae72d5e4f448b5be2ffa21c2e82, type: 2}
+  - _kind: 0
+    _tile: {fileID: 11400000, guid: 9d01e8b3246ffc544812b82b3d3e9204, type: 2}
+    _direction: 2
+    _neighbour: {fileID: 11400000, guid: 10758a6747d36fe45a0e5a0a26ff37d9, type: 2}
+  - _kind: 0
+    _tile: {fileID: 11400000, guid: 0bc01a1c357097c43b0738dd3e8afe9b, type: 2}
+    _direction: 2
+    _neighbour: {fileID: 11400000, guid: 1bcbecf72db8fa64bad2be281cec684b, type: 2}
+  - _kind: 0
+    _tile: {fileID: 11400000, guid: 464802722a3c2f543be58fafe9148f22, type: 2}
+    _direction: 2
+    _neighbour: {fileID: 11400000, guid: b1835243e34aa2a4682f4fe623b76684, type: 2}
+  - _kind: 0
+    _tile: {fileID: 11400000, guid: 9d01e8b3246ffc544812b82b3d3e9204, type: 2}
+    _direction: 3
+    _neighbour: {fileID: 11400000, guid: 464802722a3c2f543be58fafe9148f22, type: 2}
+  - _kind: 0
+    _tile: {fileID: 11400000, guid: 2181a05436a5c3141ad1bac7d8086fcc, type: 2}
+    _direction: 3
+    _neighbour: {fileID: 11400000, guid: 176f9b26bc391e84db477231a1d18280, type: 2}
+  - _kind: 0
+    _tile: {fileID: 11400000, guid: 10758a6747d36fe45a0e5a0a26ff37d9, type: 2}
+    _direction: 3
+    _neighbour: {fileID: 11400000, guid: b1835243e34aa2a4682f4fe623b76684, type: 2}
