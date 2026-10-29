@@ -13,13 +13,20 @@ permissions:
 jobs:
   editmode:
     name: EditMode tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      # The Unity editor image is ~15 GB unpacked; the stock runner doesn't have room for it.
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL /usr/local/share/boost
+          sudo docker image prune --all --force
+          df -h /
+
+      - uses: actions/checkout@v7
         with:
           lfs: true
 
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         with:
           path: Library
           key: Library-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
@@ -33,11 +40,14 @@ jobs:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
+          # EditMode tests need no build modules, so use the smaller base image.
+          # Keep the version in step with ProjectSettings/ProjectVersion.txt.
+          customImage: unityci/editor:ubuntu-6000.3.25f1-base-3
           testMode: editmode
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           checkName: EditMode test results
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: test-results
