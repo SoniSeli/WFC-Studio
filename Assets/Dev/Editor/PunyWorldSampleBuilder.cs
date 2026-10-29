@@ -17,8 +17,11 @@ namespace WfcStudio.Dev
     {
         const string Root = "Assets/Samples/PunyWorld";
         const string SheetPath = Root + "/punyworld-overworld-tileset.png";
+        const string ExtrudedSheetPath = Root + "/PunyWorldTiles.png";
         const string TilesFolder = Root + "/Tiles";
         const int CellSize = 16;
+        const int Extrusion = 2;
+        const int ExtrudedColumns = 8;
         const string Grass = "grass";
 
         // A tile cut from the sheet. Rows are counted from the top of the sheet. Sockets go up, right, down, left.
@@ -95,13 +98,14 @@ namespace WfcStudio.Dev
         [MenuItem("Tools/WFC Studio/Dev/Rebuild Puny World Samples")]
         public static void Build()
         {
-            var sprites = LoadSprites();
             Directory.CreateDirectory(TilesFolder);
+            var allTiles = Sets.SelectMany(set => set.Tiles()).GroupBy(def => def.Name).Select(group => group.First()).ToList();
+            var tiles = BuildTiles(allTiles);
 
-            foreach (var (setName, tiles) in Sets)
+            foreach (var (setName, defsOf) in Sets)
             {
-                var defs = tiles().ToList();
-                var entries = defs.Select(def => new TileEntry(def.Name, GetOrCreateTile(def, sprites), def.Weight, def.Up, def.Right, def.Down, def.Left));
+                var defs = defsOf().ToList();
+                var entries = defs.Select(def => new TileEntry(def.Name, tiles[def.Name], def.Weight, def.Up, def.Right, def.Down, def.Left));
                 var sockets = defs.SelectMany(def => new[] { def.Up, def.Right, def.Down, def.Left })
                     .Distinct()
                     .Select(name => new SocketDefinition(name));
@@ -110,8 +114,7 @@ namespace WfcStudio.Dev
                 if (setName == "Overworld")
                 {
                     // Forests cover the clustered trees here, so keep single trees apart.
-                    var tree = LoadTile("Tree");
-                    exceptions.Add(new AdjacencyException(ExceptionKind.Forbid, tree, ExceptionDirection.Any, tree));
+                    exceptions.Add(new AdjacencyException(ExceptionKind.Forbid, tiles["Tree"], ExceptionDirection.Any, tiles["Tree"]));
                 }
 
                 var set = GetOrCreate<TileSet>($"{Root}/{setName}.asset");
@@ -126,7 +129,86 @@ namespace WfcStudio.Dev
             }
 
             AssetDatabase.SaveAssets();
-            Debug.Log($"Built {Sets.Length} Puny World tile sets.");
+            Debug.Log($"Built {Sets.Length} Puny World tile sets from {allTiles.Count} tiles.");
+        }
+
+        // Copies every used tile into its own cell of a new sheet, repeating its border pixels outward. On the original
+        // sheet many tiles border fully transparent cells, and at non-integer zoom a point-sampled tile can pick up a texel
+        // just outside its rect, which shows as thin seams. With extruded edges, that texel is the tile's own edge colour.
+        static Dictionary<string, Tile> BuildTiles(List<TileDef> defs)
+        {
+            var source = new Texture2D(2, 2);
+            source.LoadImage(File.ReadAllBytes(SheetPath));
+
+            int cell = CellSize + 2 * Extrusion;
+            int rows = (defs.Count + ExtrudedColumns - 1) / ExtrudedColumns;
+            var sheet = new Texture2D(ExtrudedColumns * cell, rows * cell, TextureFormat.RGBA32, false);
+            sheet.SetPixels32(new Color32[sheet.width * sheet.height]);
+
+            var rects = new Dictionary<string, Rect>();
+            for (int i = 0; i < defs.Count; i++)
+            {
+                var def = defs[i];
+                int sourceX = def.Column * CellSize;
+                int sourceY = source.height - (def.Row + 1) * CellSize;
+                int targetX = i % ExtrudedColumns * cell;
+                int targetY = (rows - 1 - i / ExtrudedColumns) * cell;
+
+                for (int y = 0; y < cell; y++)
+                {
+                    for (int x = 0; x < cell; x++)
+                    {
+                        int fromX = sourceX + Mathf.Clamp(x - Extrusion, 0, CellSize - 1);
+                        int fromY = sourceY + Mathf.Clamp(y - Extrusion, 0, CellSize - 1);
+                        sheet.SetPixel(targetX + x, targetY + y, source.GetPixel(fromX, fromY));
+                    }
+                }
+                rects[def.Name] = new Rect(targetX + Extrusion, targetY + Extrusion, CellSize, CellSize);
+            }
+
+            File.WriteAllBytes(ExtrudedSheetPath, sheet.EncodeToPNG());
+            UnityEngine.Object.DestroyImmediate(source);
+            UnityEngine.Object.DestroyImmediate(sheet);
+            ImportExtrudedSheet();
+
+            var texture = AssetDatabase.LoadAssetAtPath<Texture2D>(ExtrudedSheetPath);
+            var tiles = new Dictionary<string, Tile>();
+            foreach (var def in defs)
+                tiles[def.Name] = GetOrCreateTile(def.Name, texture, rects[def.Name]);
+            return tiles;
+        }
+
+        static void ImportExtrudedSheet()
+        {
+            AssetDatabase.ImportAsset(ExtrudedSheetPath);
+            var importer = (TextureImporter)AssetImporter.GetAtPath(ExtrudedSheetPath);
+            importer.textureType = TextureImporterType.Sprite;
+            importer.spriteImportMode = SpriteImportMode.Single;
+            importer.spritePixelsPerUnit = CellSize;
+            importer.filterMode = FilterMode.Point;
+            importer.mipmapEnabled = false;
+            importer.wrapMode = TextureWrapMode.Clamp;
+            importer.alphaIsTransparency = true;
+            importer.textureCompression = TextureImporterCompression.Uncompressed;
+            importer.SaveAndReimport();
+        }
+
+        // Each Tile asset holds its own sprite as a sub-asset, cut from the extruded sheet.
+        static Tile GetOrCreateTile(string name, Texture2D texture, Rect rect)
+        {
+            string path = $"{TilesFolder}/{name}.asset";
+            var tile = GetOrCreate<Tile>(path);
+            foreach (var old in AssetDatabase.LoadAllAssetsAtPath(path).OfType<Sprite>())
+                UnityEngine.Object.DestroyImmediate(old, true);
+
+            var sprite = Sprite.Create(texture, rect, new Vector2(0.5f, 0.5f), CellSize, 0, SpriteMeshType.FullRect);
+            sprite.name = name;
+            AssetDatabase.AddObjectToAsset(sprite, tile);
+
+            tile.sprite = sprite;
+            tile.colliderType = Tile.ColliderType.None;
+            EditorUtility.SetDirty(tile);
+            return tile;
         }
 
         /// <summary>Generates a map from each sample tile set and writes it as a PNG, for reviewing the socket labels.</summary>
@@ -140,7 +222,7 @@ namespace WfcStudio.Dev
         {
             Directory.CreateDirectory(folder);
             var sheet = new Texture2D(2, 2);
-            sheet.LoadImage(File.ReadAllBytes(SheetPath));
+            sheet.LoadImage(File.ReadAllBytes(ExtrudedSheetPath));
 
             foreach (var (setName, _) in Sets)
             {
@@ -183,42 +265,6 @@ namespace WfcStudio.Dev
             int index = Array.IndexOf(args, "-wfcPreviewDir");
             if (index >= 0 && index + 1 < args.Length)
                 RenderPreviews(args[index + 1], 40, 24, 3);
-        }
-
-        static Dictionary<(int, int), Sprite> LoadSprites()
-        {
-            var sprites = new Dictionary<(int, int), Sprite>();
-            foreach (var sprite in AssetDatabase.LoadAllAssetsAtPath(SheetPath).OfType<Sprite>())
-            {
-                var rect = sprite.rect;
-                if ((int)rect.width != CellSize || (int)rect.height != CellSize)
-                    continue;
-
-                int column = (int)rect.x / CellSize;
-                int row = (sprite.texture.height - (int)rect.y - CellSize) / CellSize;
-                sprites[(column, row)] = sprite;
-            }
-
-            if (sprites.Count == 0)
-                throw new InvalidOperationException($"No {CellSize}x{CellSize} sprites found in {SheetPath}.");
-            return sprites;
-        }
-
-        static Tile GetOrCreateTile(TileDef def, Dictionary<(int, int), Sprite> sprites)
-        {
-            if (!sprites.TryGetValue((def.Column, def.Row), out var sprite))
-                throw new InvalidOperationException($"No sprite at column {def.Column}, row {def.Row} for '{def.Name}'.");
-
-            var tile = GetOrCreate<Tile>($"{TilesFolder}/{def.Name}.asset");
-            tile.sprite = sprite;
-            tile.colliderType = Tile.ColliderType.None;
-            EditorUtility.SetDirty(tile);
-            return tile;
-        }
-
-        static Tile LoadTile(string name)
-        {
-            return AssetDatabase.LoadAssetAtPath<Tile>($"{TilesFolder}/{name}.asset");
         }
 
         static T GetOrCreate<T>(string path) where T : ScriptableObject

@@ -6,7 +6,7 @@
 ![Unity 6.3 LTS](https://img.shields.io/badge/Unity-6.3%20LTS-black?logo=unity)
 ![License: MIT](https://img.shields.io/badge/license-MIT-blue)
 
-> **Status:** early development. The solver and tile set assets are done (M1–M3); the live visualization and demo scene (M4) are next. See the [roadmap](#roadmap).
+> **Status:** early development. The solver, tile set assets and the live demo are done (M1–M4); the WFC Studio editor window (M5) is next. See the [roadmap](#roadmap).
 
 <!-- M7: hero GIF of a map generating, with the entropy heatmap on -->
 
@@ -34,8 +34,9 @@ WFC-Studio/
 │  ├─ Runtime/Core/             WfcStudio.Core: solver, plain C#
 │  ├─ Runtime/Unity/            WfcStudio.Runtime: assets, Tilemap output, visualization
 │  └─ Tests/Editor/             WfcStudio.Tests: EditMode tests
+├─ Assets/Demo/                 Demo scene: UI Toolkit panel, live generation, entropy heatmap
 ├─ Assets/Samples/PunyWorld/    Sample tile sets: Meadow, Lake, Forest, Mountain, Castle, Overworld
-├─ Assets/Dev/Editor/           Tool that rebuilds the sample assets from code
+├─ Assets/Dev/Editor/           Tools that rebuild the samples and demo scene from code, and make WebGL builds
 ├─ Assets/Tests/Editor/         Tests that every sample validates and generates
 └─ .github/workflows/           CI: EditMode tests on every push to main
 ```
@@ -50,7 +51,8 @@ https://github.com/SoniSeli/WFC-Studio.git?path=/Packages/com.soniseli.wfc
 
 ## Development
 
-- Unity **6000.3.25f1** (6.3 LTS). Open the repository root with Unity Hub.
+- Unity **6000.3.25f1** (6.3 LTS). Open the repository root with Unity Hub, then open `Assets/Demo/Demo.unity` and press Play.
+- Demo controls: pick a tile set, size and seed, then **Generate** to watch it run or **Instant** to solve in one go. Shortcuts: **Space** pauses, **N** steps, **G** generates, **R** picks a new seed.
 - Run tests from **Window → General → Test Runner → EditMode**, or from a terminal with the Unity CLI:
   `unity test . --mode EditMode`
 
@@ -60,7 +62,7 @@ https://github.com/SoniSeli/WFC-Studio.git?path=/Packages/com.soniseli.wfc
 - [x] **M1 Core solver**: domains, propagation, weighted entropy, seeded RNG, pinned tiles
 - [x] **M2 Robustness**: backtracking with restart fallback, stats, wrapping edges
 - [x] **M3 Authoring data**: tile set assets with edge sockets, rule checker, Puny World biomes
-- [ ] **M4 Runtime visualization**: Tilemap output, live stepping, entropy heatmap, demo scene
+- [x] **M4 Runtime visualization**: Tilemap output, live stepping, entropy heatmap, demo scene
 - [ ] **M5 Editor tool**: WFC Studio window, pinned tiles, Undo
 - [ ] **M6 Performance**: profiling, benchmarks, optional Burst solver
 - [ ] **M7 Release**: WebGL demo, docs, v1.0.0

@@ -19,6 +19,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - `SocketTileSet` (Core): describes tiles by edge sockets. Matching sockets may touch, paired sockets match only each other, and exceptions allow or forbid single pairs. `Compile()` returns a `RuleTable` plus `ValidationIssue`s, which flag missing sockets, invalid weights, conflicting or redundant exceptions, unused sockets, tiles that can only appear at a map edge, and tiles that can't appear away from the edges.
 - `TileSet` asset (Runtime, **Create → WFC Studio → Tile Set**): socket labels, tile entries (tile, weight, four sockets) and exceptions, authored in one asset. Structural problems such as unknown socket names or missing and duplicate tiles are reported before the rules are analysed.
 - `RuleTable.Builder.Disallow`.
+- `WfcGenerator` component: runs the solver on a `TileSet` and draws into a `Tilemap`, redrawing only changed cells in one batch per frame. Advances a set number of steps per second from `Update`, capped by a per-frame time budget so large maps never stall a frame. Has `Generate`, `GenerateInstantly`, `Pause`, `Resume`, `StepOnce`, `Complete` and `Clear`, an optional placeholder tile for undecided cells, solver time, and `Started` and `Redrawn` events.
+- `EntropyHeatmap` component: overlays each undecided cell's entropy, one texel per cell, with a configurable gradient.
+- `TilePopAnimation` component: tiles pop into place through Tilemap cell transforms, without extra GameObjects.
 
 ### Changed
 
