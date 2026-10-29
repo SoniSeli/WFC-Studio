@@ -1,10 +1,20 @@
 name: Tests
 
+# Work lands directly on main, so each change is tested once. Docs-only pushes skip the Unity run.
 on:
   push:
     branches: [main]
-  pull_request:
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - 'LICENSE'
+      - '.editorconfig'
   workflow_dispatch:
+
+# A newer push cancels the run it supersedes.
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
