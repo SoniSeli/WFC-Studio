@@ -33,8 +33,9 @@ namespace WfcStudio.Dev
         const string Summit = "summit";
         const string TerraceBorder = "terrace-border";
 
-        // Biomes that may grow to any size but never smaller than 3x3 (2x2 blobs look like stamps).
-        static readonly string[] GrowingBiomes = { "Lake", "Forest", "Mountain", "Terrace" };
+        // Biomes that may grow to any size but never smaller than 3x3 (2x2 blobs look like stamps). Forests are left out:
+        // a 2x2 or 2-wide grove still reads as trees.
+        static readonly string[] GrowingBiomes = { "Lake", "Mountain", "Terrace" };
 
         // A tile cut from the sheet. Rows are counted from the top of the sheet. Sockets go up, right, down, left.
         readonly struct TileDef
@@ -134,7 +135,8 @@ namespace WfcStudio.Dev
         }
 
         static IEnumerable<TileDef> Lake() => Blob("Lake", "lake", 7, 10, 0.06f, 0.15f, 0.5f, "lake");
-        static IEnumerable<TileDef> Forest() => Blob("Forest", "forest", 11, 40, 0.06f, 0.2f, 0.8f, "forest");
+        // Corners outweigh sides so most forests close early as small groves; a big forest still shows up now and then.
+        static IEnumerable<TileDef> Forest() => Blob("Forest", "forest", 11, 40, 0.14f, 0.12f, 0.4f, "forest");
         // Inner corners are rare: frequent bends turn plateaus into maze-like walls.
         static IEnumerable<TileDef> Mountain() =>
             Blob("Mountain", "mountain", 0, 4, 0.07f, 0.16f, 0.5f, Plateau)
