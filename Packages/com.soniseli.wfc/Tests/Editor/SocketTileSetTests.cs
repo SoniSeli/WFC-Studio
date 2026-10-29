@@ -38,12 +38,14 @@ namespace WfcStudio.Tests
         }
 
         [Test]
-        public void PairedSockets_MatchEachOtherButNotThemselves()
+        public void OneWaySockets_ConnectToEachOtherButNotThemselves()
         {
             var set = new SocketTileSet(new[] { "Cliff Top", "Cliff Bottom" }, new[] { "cliff-top", "cliff-base" });
             set.SetSockets(0, 0, 0, 0, 0);
             set.SetSockets(1, 1, 1, 1, 1);
-            set.Pair(0, 1);
+            set.SetConnected(0, 0, false);
+            set.SetConnected(1, 1, false);
+            set.SetConnected(0, 1, true);
             var rules = set.Compile().Rules;
 
             Assert.That(rules.Allows(0, Direction.Down, 1), Is.True);
@@ -52,15 +54,44 @@ namespace WfcStudio.Tests
         }
 
         [Test]
-        public void Unpairing_RestoresSelfMatching()
+        public void Connections_AreSymmetric_AndSocketsStartSelfConnected()
         {
-            var set = new SocketTileSet(new[] { "A" }, new[] { "a", "b" });
-            set.Pair(0, 1);
-            set.Pair(0, 0);
+            var set = new SocketTileSet(new[] { "A" }, new[] { "a", "b", "c" });
+            set.SetConnected(0, 1, true);
 
             Assert.That(set.Matches(0, 0), Is.True);
-            Assert.That(set.Matches(1, 1), Is.True);
+            Assert.That(set.Matches(0, 1), Is.True);
+            Assert.That(set.Matches(1, 0), Is.True);
+            Assert.That(set.Matches(0, 2), Is.False);
+
+            set.SetConnected(1, 0, false);
             Assert.That(set.Matches(0, 1), Is.False);
+        }
+
+        [Test]
+        public void BorderSocket_KeepsFeaturesApart()
+        {
+            // Two one-tile "ponds" whose edges are a border that faces grass but never another border.
+            var set = new SocketTileSet(new[] { "Grass", "Pond", "Puddle" }, new[] { "grass", "border" });
+            set.SetSockets(0, 0, 0, 0, 0);
+            set.SetSockets(1, 1, 1, 1, 1);
+            set.SetSockets(2, 1, 1, 1, 1);
+            set.SetConnected(1, 1, false);
+            set.SetConnected(1, 0, true);
+            var result = set.Compile();
+            var rules = result.Rules;
+
+            Assert.That(rules.Allows(0, Direction.Right, 1), Is.True);
+            Assert.That(rules.Allows(1, Direction.Right, 2), Is.False);
+            Assert.That(rules.Allows(1, Direction.Up, 1), Is.False);
+            Assert.That(result.Issues.Where(i => i.Severity != IssueSeverity.Info), Is.Empty);
+
+            for (uint seed = 0; seed < 10; seed++)
+            {
+                var solver = new WfcSolver(rules, 12, 8, seed);
+                Assert.That(solver.Run(), Is.EqualTo(SolverStatus.Completed));
+                AssertValidMap(solver, rules);
+            }
         }
 
         [Test]

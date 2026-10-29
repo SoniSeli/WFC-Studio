@@ -5,10 +5,11 @@ namespace WfcStudio.Core
 {
     /// <summary>
     /// A tile set described by edge sockets: every tile edge carries a socket, and two facing edges may touch
-    /// when their sockets match. A socket matches itself unless it is paired with another socket, in which case
-    /// it matches only that one (for edges that fit one way, like the top and bottom of a cliff).
-    /// Exceptions then allow or forbid individual pairs. <see cref="Compile"/> turns it into a <see cref="RuleTable"/>
-    /// and reports anything a designer should look at.
+    /// when their sockets connect. By default a socket connects only to itself. <see cref="SetConnected"/> adds or
+    /// removes connections, always both ways. For example, a "border" socket that connects to "grass" but not to
+    /// itself keeps features from touching each other, and "cliff-top" connecting only to "cliff-base" makes an edge
+    /// that fits one way. Exceptions then allow or forbid individual pairs of tiles. <see cref="Compile"/> turns it
+    /// into a <see cref="RuleTable"/> and reports anything a designer should look at.
     /// </summary>
     public sealed class SocketTileSet
     {
@@ -25,7 +26,9 @@ namespace WfcStudio.Core
         readonly string[] _tileNames;
         readonly string[] _socketNames;
         readonly int[] _sockets;
-        readonly int[] _mates;
+
+        // Symmetric socket-by-socket connection matrix; the diagonal starts true.
+        readonly bool[] _connected;
         readonly double[] _weights;
         readonly List<AdjacencyException> _exceptions = new List<AdjacencyException>();
 
@@ -41,11 +44,11 @@ namespace WfcStudio.Core
                 _tileNames[i] = tileNames[i];
 
             _socketNames = new string[socketNames.Count];
-            _mates = new int[socketNames.Count];
+            _connected = new bool[socketNames.Count * socketNames.Count];
             for (int i = 0; i < _socketNames.Length; i++)
             {
                 _socketNames[i] = socketNames[i];
-                _mates[i] = i;
+                _connected[i * socketNames.Count + i] = true;
             }
 
             _sockets = new int[_tileNames.Length * DirectionExtensions.Count];
@@ -101,21 +104,22 @@ namespace WfcStudio.Core
             _weights[tile] = weight;
         }
 
-        /// <summary>Makes <paramref name="socket"/> and <paramref name="mate"/> match each other instead of themselves. Pairing a socket with itself undoes a pairing.</summary>
-        public void Pair(int socket, int mate)
+        /// <summary>
+        /// Sets whether edges with sockets <paramref name="a"/> and <paramref name="b"/> may face each other, in both directions.
+        /// Passing the same socket twice controls whether that socket connects to itself.
+        /// </summary>
+        public void SetConnected(int a, int b, bool connected)
         {
-            CheckSocket(socket, nameof(socket));
-            CheckSocket(mate, nameof(mate));
+            CheckSocket(a, nameof(a));
+            CheckSocket(b, nameof(b));
 
-            Unpair(socket);
-            Unpair(mate);
-            _mates[socket] = mate;
-            _mates[mate] = socket;
+            _connected[a * SocketCount + b] = connected;
+            _connected[b * SocketCount + a] = connected;
         }
 
         public bool Matches(int socket, int other)
         {
-            return _mates[socket] == other;
+            return _connected[socket * SocketCount + other];
         }
 
         /// <summary>
@@ -313,13 +317,6 @@ namespace WfcStudio.Core
         string DescribePair(int tile, Direction direction, int neighbour)
         {
             return $"'{_tileNames[neighbour]}' {Preposition(direction)} '{_tileNames[tile]}'";
-        }
-
-        void Unpair(int socket)
-        {
-            int mate = _mates[socket];
-            _mates[mate] = mate;
-            _mates[socket] = socket;
         }
 
         static bool HasErrors(List<ValidationIssue> issues)

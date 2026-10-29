@@ -104,7 +104,7 @@ namespace WfcStudio.Tests
             var grass = Create<Tile>("Grass");
             var set = Create<TileSet>("Set");
             set.SetContents(
-                new[] { new SocketDefinition("grass"), new SocketDefinition("grass"), new SocketDefinition(""), new SocketDefinition("cliff", "nowhere") },
+                new[] { new SocketDefinition("grass"), new SocketDefinition("grass"), new SocketDefinition(""), new SocketDefinition("cliff", true, "nowhere") },
                 new[] { Entry(grass, "grass"), Entry(grass, "grass"), Entry(null, "grass") });
 
             var result = set.Compile();
@@ -126,24 +126,39 @@ namespace WfcStudio.Tests
         }
 
         [Test]
-        public void SocketPairs_FromEitherSide_Work_AndConflictsAreErrors()
+        public void SocketConnections_WorkWhicheverSideListsThem()
         {
             var top = Create<Tile>("Cliff Top");
             var bottom = Create<Tile>("Cliff Bottom");
             var set = Create<TileSet>("Cliff");
             set.SetContents(
-                new[] { new SocketDefinition("top", "base"), new SocketDefinition("base") },
+                new[] { new SocketDefinition("top", false, "base"), new SocketDefinition("base", false) },
                 new[] { Entry(top, "top"), Entry(bottom, "base") });
 
             var rules = set.Compile().Rules;
             Assert.That(rules.Allows(0, Direction.Down, 1), Is.True);
+            Assert.That(rules.Allows(1, Direction.Up, 0), Is.True);
             Assert.That(rules.Allows(0, Direction.Down, 0), Is.False);
+            Assert.That(rules.Allows(1, Direction.Down, 1), Is.False);
+        }
 
-            var extra = Create<Tile>("Extra");
+        [Test]
+        public void BorderThatFacesOnlyGrass_KeepsFeaturesApart()
+        {
+            var grass = Create<Tile>("Grass");
+            var pond = Create<Tile>("Pond");
+            var rock = Create<Tile>("Rock");
+            var set = Create<TileSet>("Set");
             set.SetContents(
-                new[] { new SocketDefinition("top", "base"), new SocketDefinition("base", "other"), new SocketDefinition("other") },
-                new[] { Entry(top, "top"), Entry(bottom, "base"), Entry(extra, "other") });
-            Assert.That(Has(set.Compile(), IssueCode.ConflictingSocketPairs), Is.True);
+                new[] { new SocketDefinition("grass"), new SocketDefinition("border", false, "grass") },
+                new[] { Entry(grass, "grass"), Entry(pond, "border"), Entry(rock, "border") });
+
+            var result = set.Compile();
+
+            Assert.That(result.HasErrors, Is.False, string.Join("\n", result.Issues));
+            Assert.That(result.Rules.Allows(1, Direction.Right, 0), Is.True);
+            Assert.That(result.Rules.Allows(1, Direction.Right, 2), Is.False);
+            Assert.That(result.Rules.Allows(2, Direction.Up, 2), Is.False);
         }
 
         [Test]

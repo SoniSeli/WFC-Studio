@@ -25,4 +25,6 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Changed
 
+- Socket matching is now a set of connections instead of a single mate. `SocketTileSet.SetConnected(a, b, connected)` replaces `Pair`, and `SocketDefinition` has `ConnectsToSelf` and a `ConnectsTo` list instead of `Mate`. One socket can now face several others, for example a feature `border` that faces `grass` but not another border, which keeps features from touching. `IssueCode.ConflictingSocketPairs` is removed.
+
 - `SolverStatus.Failed` now means no solution was found: the rules and pins can't be satisfied, or the backtrack and restart budget ran out. Before M2 it meant the first contradiction.

@@ -20,7 +20,7 @@ validated tile rules, and editor tooling a designer can use without writing code
 
 - **Deterministic solver in plain C#**: same seed, same map, on every platform. No `UnityEngine` dependency, fully unit tested.
 - **Weighted entropy and backtracking**: control how often each tile appears, and recover from contradictions instead of restarting.
-- **Edge sockets instead of neighbour lists**: label each tile edge, and matching edges may touch. Rules can never be one-sided, and a new tile needs only its own four labels. Exceptions cover the special cases.
+- **Edge sockets instead of neighbour lists**: label each tile edge, and connected sockets may touch. Rules can never be one-sided, and a new tile needs only its own four labels. Socket connections express layout rules. For example, a `border` that faces grass but not another border keeps features apart. Exceptions cover the special cases, such as a minimum feature size.
 - **Validated tile sets**: tile sets are ScriptableObject assets. The checker explains problems in plain language, such as an unknown socket, a tile that can only appear at the map edge, or conflicting exceptions.
 - **Live visualization**: watch the map collapse step by step, with an entropy heatmap overlay.
 - **WFC Studio editor window**: paint the tiles you want fixed, then let WFC fill in the rest. Edit-mode generation with full Undo.

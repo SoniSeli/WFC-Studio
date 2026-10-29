@@ -14,42 +14,73 @@ MonoBehaviour:
   m_EditorClassIdentifier: WfcStudio.Runtime::WfcStudio.TileSet
   _sockets:
   - _name: grass
-    _mate: 
-  - _name: castle-top
-    _mate: 
-  - _name: castle-left
-    _mate: 
-  - _name: castle
-    _mate: 
-  - _name: castle-right
-    _mate: 
-  - _name: castle-bottom
-    _mate: 
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: border
+    _connectsToSelf: 0
+    _connectsTo:
+    - grass
+  - _name: castle-h00
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: castle-v00
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: castle-h01
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: castle-v10
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: castle-v20
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: castle-h10
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: castle-v01
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: castle-h11
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: castle-v11
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: castle-v21
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: castle-h20
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: castle-h21
+    _connectsToSelf: 1
+    _connectsTo: []
   _tiles:
   - _name: Grass
     _tile: {fileID: 11400000, guid: c49fa40f1fc31b943aad961f7202bc9d, type: 2}
-    _weight: 8
+    _weight: 10
     _up: grass
     _right: grass
     _down: grass
     _left: grass
   - _name: Grass Tufts
     _tile: {fileID: 11400000, guid: 19e6c8b0618993946a143f9241ad1778, type: 2}
-    _weight: 4
+    _weight: 5
     _up: grass
     _right: grass
     _down: grass
     _left: grass
   - _name: White Flowers
     _tile: {fileID: 11400000, guid: 0364d242a9154ab44af438511c34f8d3, type: 2}
-    _weight: 0.4
+    _weight: 0.5
     _up: grass
     _right: grass
     _down: grass
     _left: grass
   - _name: Red Flowers
     _tile: {fileID: 11400000, guid: 416642f247814254f80c563da2e18da7, type: 2}
-    _weight: 0.4
+    _weight: 0.5
     _up: grass
     _right: grass
     _down: grass
@@ -61,81 +92,74 @@ MonoBehaviour:
     _right: grass
     _down: grass
     _left: grass
-  - _name: Stone
-    _tile: {fileID: 11400000, guid: d1d1fc157ac891342b11ae677c846e45, type: 2}
-    _weight: 0.3
-    _up: grass
-    _right: grass
-    _down: grass
-    _left: grass
   - _name: Tree
     _tile: {fileID: 11400000, guid: 614a3e36d8419db429f237061dba81cb, type: 2}
-    _weight: 0.6
+    _weight: 0.8
     _up: grass
     _right: grass
     _down: grass
     _left: grass
   - _name: Castle Top Left
     _tile: {fileID: 11400000, guid: de49f4be2f96155479bed2154d5d486d, type: 2}
-    _weight: 0.5
-    _up: grass
-    _right: castle-top
-    _down: castle-left
-    _left: grass
+    _weight: 0.03
+    _up: border
+    _right: castle-h00
+    _down: castle-v00
+    _left: border
   - _name: Castle Top
     _tile: {fileID: 11400000, guid: eb4448b93dfea3240bc0a010f26f3f30, type: 2}
-    _weight: 0.5
-    _up: grass
-    _right: castle-top
-    _down: castle
-    _left: castle-top
+    _weight: 0.03
+    _up: border
+    _right: castle-h01
+    _down: castle-v10
+    _left: castle-h00
   - _name: Castle Top Right
     _tile: {fileID: 11400000, guid: 98b2ef0f04710a54ebeb9da4156993e6, type: 2}
-    _weight: 0.5
-    _up: grass
-    _right: grass
-    _down: castle-right
-    _left: castle-top
+    _weight: 0.03
+    _up: border
+    _right: border
+    _down: castle-v20
+    _left: castle-h01
   - _name: Castle Left
     _tile: {fileID: 11400000, guid: 5cc53c8d4db03db4db29c64613931aa1, type: 2}
-    _weight: 0.5
-    _up: castle-left
-    _right: castle
-    _down: castle-left
-    _left: grass
+    _weight: 0.03
+    _up: castle-v00
+    _right: castle-h10
+    _down: castle-v01
+    _left: border
   - _name: Castle Centre
     _tile: {fileID: 11400000, guid: 06ff73c539b61a64d9da594c6bc31c71, type: 2}
-    _weight: 1
-    _up: castle
-    _right: castle
-    _down: castle
-    _left: castle
+    _weight: 0.03
+    _up: castle-v10
+    _right: castle-h11
+    _down: castle-v11
+    _left: castle-h10
   - _name: Castle Right
     _tile: {fileID: 11400000, guid: b8faf1211ac4831488c87f6293005b5a, type: 2}
-    _weight: 0.5
-    _up: castle-right
-    _right: grass
-    _down: castle-right
-    _left: castle
+    _weight: 0.03
+    _up: castle-v20
+    _right: border
+    _down: castle-v21
+    _left: castle-h11
   - _name: Castle Bottom Left
     _tile: {fileID: 11400000, guid: e8fad8e2a21f817409ed41a59a803bcf, type: 2}
-    _weight: 0.5
-    _up: castle-left
-    _right: castle-bottom
-    _down: grass
-    _left: grass
+    _weight: 0.03
+    _up: castle-v01
+    _right: castle-h20
+    _down: border
+    _left: border
   - _name: Castle Bottom
     _tile: {fileID: 11400000, guid: fb204407d858dfa40a67a550a66510bf, type: 2}
-    _weight: 0.5
-    _up: castle
-    _right: castle-bottom
-    _down: grass
-    _left: castle-bottom
+    _weight: 0.03
+    _up: castle-v11
+    _right: castle-h21
+    _down: border
+    _left: castle-h20
   - _name: Castle Bottom Right
     _tile: {fileID: 11400000, guid: 07abf3876c97d774fbbf9b0faeec5c1e, type: 2}
-    _weight: 0.5
-    _up: castle-right
-    _right: grass
-    _down: grass
-    _left: castle-bottom
+    _weight: 0.03
+    _up: castle-v21
+    _right: border
+    _down: border
+    _left: castle-h21
   _exceptions: []

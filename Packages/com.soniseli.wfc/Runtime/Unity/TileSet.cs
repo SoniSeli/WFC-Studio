@@ -56,8 +56,12 @@ namespace WfcStudio
 
             var set = new SocketTileSet(tileNames, socketNames);
             for (int i = 0; i < _sockets.Count; i++)
-                if (!string.IsNullOrEmpty(_sockets[i].Mate))
-                    set.Pair(i, socketIds[_sockets[i].Mate]);
+            {
+                set.SetConnected(i, i, _sockets[i].ConnectsToSelf);
+                foreach (string other in _sockets[i].ConnectsTo)
+                    if (!string.IsNullOrEmpty(other))
+                        set.SetConnected(i, socketIds[other], true);
+            }
 
             for (int tile = 0; tile < _tiles.Count; tile++)
             {
@@ -106,20 +110,13 @@ namespace WfcStudio
 
             foreach (var socket in _sockets)
             {
-                if (string.IsNullOrEmpty(socket.Mate) || string.IsNullOrEmpty(socket.Name))
+                if (string.IsNullOrEmpty(socket.Name))
                     continue;
 
-                if (!ids.TryGetValue(socket.Mate, out int mate))
-                {
-                    issues.Add(new ValidationIssue(IssueSeverity.Error, IssueCode.UnknownSocket,
-                        $"Socket '{socket.Name}' is paired with '{socket.Mate}', which is not defined in this tile set."));
-                    continue;
-                }
-
-                string mateOfMate = _sockets[mate].Mate;
-                if (!string.IsNullOrEmpty(mateOfMate) && mateOfMate != socket.Name)
-                    issues.Add(new ValidationIssue(IssueSeverity.Error, IssueCode.ConflictingSocketPairs,
-                        $"Socket '{socket.Name}' is paired with '{socket.Mate}', but '{socket.Mate}' is paired with '{mateOfMate}'."));
+                foreach (string other in socket.ConnectsTo)
+                    if (!string.IsNullOrEmpty(other) && !ids.ContainsKey(other))
+                        issues.Add(new ValidationIssue(IssueSeverity.Error, IssueCode.UnknownSocket,
+                            $"Socket '{socket.Name}' connects to '{other}', which is not defined in this tile set."));
             }
 
             return ids;

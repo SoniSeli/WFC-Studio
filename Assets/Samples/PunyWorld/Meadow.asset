@@ -14,32 +14,33 @@ MonoBehaviour:
   m_EditorClassIdentifier: WfcStudio.Runtime::WfcStudio.TileSet
   _sockets:
   - _name: grass
-    _mate: 
+    _connectsToSelf: 1
+    _connectsTo: []
   _tiles:
   - _name: Grass
     _tile: {fileID: 11400000, guid: c49fa40f1fc31b943aad961f7202bc9d, type: 2}
-    _weight: 8
+    _weight: 10
     _up: grass
     _right: grass
     _down: grass
     _left: grass
   - _name: Grass Tufts
     _tile: {fileID: 11400000, guid: 19e6c8b0618993946a143f9241ad1778, type: 2}
-    _weight: 4
+    _weight: 5
     _up: grass
     _right: grass
     _down: grass
     _left: grass
   - _name: White Flowers
     _tile: {fileID: 11400000, guid: 0364d242a9154ab44af438511c34f8d3, type: 2}
-    _weight: 0.4
+    _weight: 0.5
     _up: grass
     _right: grass
     _down: grass
     _left: grass
   - _name: Red Flowers
     _tile: {fileID: 11400000, guid: 416642f247814254f80c563da2e18da7, type: 2}
-    _weight: 0.4
+    _weight: 0.5
     _up: grass
     _right: grass
     _down: grass
@@ -51,16 +52,9 @@ MonoBehaviour:
     _right: grass
     _down: grass
     _left: grass
-  - _name: Stone
-    _tile: {fileID: 11400000, guid: d1d1fc157ac891342b11ae677c846e45, type: 2}
-    _weight: 0.3
-    _up: grass
-    _right: grass
-    _down: grass
-    _left: grass
   - _name: Tree
     _tile: {fileID: 11400000, guid: 614a3e36d8419db429f237061dba81cb, type: 2}
-    _weight: 0.6
+    _weight: 0.8
     _up: grass
     _right: grass
     _down: grass

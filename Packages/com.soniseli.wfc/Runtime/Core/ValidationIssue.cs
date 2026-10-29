@@ -21,7 +21,6 @@ namespace WfcStudio.Core
         UnnamedSocket,
         DuplicateSocket,
         UnknownSocket,
-        ConflictingSocketPairs,
         UnknownExceptionTile,
 
         // Definition: reported when compiling sockets into rules.

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: Tree
   m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.Tilemaps.Tile
-  m_Sprite: {fileID: 956852838241078805}
+  m_Sprite: {fileID: 3187959403111797619}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1
@@ -34,7 +34,7 @@ MonoBehaviour:
   m_InstancedGameObject: {fileID: 0}
   m_Flags: 1
   m_ColliderType: 0
---- !u!213 &956852838241078805
+--- !u!213 &3187959403111797619
 Sprite:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -43,7 +43,7 @@ Sprite:
   m_Name: Tree
   m_Rect:
     serializedVersion: 2
-    x: 122
+    x: 102
     y: 102
     width: 16
     height: 16
@@ -140,14 +140,14 @@ Sprite:
     m_Bindpose: []
     textureRect:
       serializedVersion: 2
-      x: 122
+      x: 102
       y: 102
       width: 16
       height: 16
     textureRectOffset: {x: 0, y: 0}
     atlasRectOffset: {x: -1, y: -1}
     settingsRaw: 0
-    uvTransform: {x: 16, y: 130, z: 16, w: 110}
+    uvTransform: {x: 16, y: 110, z: 16, w: 110}
     downscaleMultiplier: 1
   m_AtlasRD:
     serializedVersion: 3
@@ -231,14 +231,14 @@ Sprite:
     m_Bindpose: []
     textureRect:
       serializedVersion: 2
-      x: 122
+      x: 102
       y: 102
       width: 16
       height: 16
     textureRectOffset: {x: 0, y: 0}
     atlasRectOffset: {x: -1, y: -1}
     settingsRaw: 0
-    uvTransform: {x: 16, y: 130, z: 16, w: 110}
+    uvTransform: {x: 16, y: 110, z: 16, w: 110}
     downscaleMultiplier: 1
   m_PhysicsShape: []
   m_Bones: []
