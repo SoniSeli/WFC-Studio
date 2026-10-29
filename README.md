@@ -6,7 +6,7 @@
 ![Unity 6.3 LTS](https://img.shields.io/badge/Unity-6.3%20LTS-black?logo=unity)
 ![License: MIT](https://img.shields.io/badge/license-MIT-blue)
 
-> **Status:** early development, Milestone 1 (core solver). See the [roadmap](#roadmap).
+> **Status:** early development. The solver is done (M1–M2); tile set assets (M3) are next. See the [roadmap](#roadmap).
 
 <!-- M7: hero GIF of a map generating, with the entropy heatmap on -->
 
@@ -55,7 +55,7 @@ https://github.com/SoniSeli/WFC-Studio.git?path=/Packages/com.soniseli.wfc
 
 - [x] **M0 Foundation**: project, package skeleton, CI
 - [x] **M1 Core solver**: domains, propagation, weighted entropy, seeded RNG, pinned tiles
-- [ ] **M2 Robustness**: backtracking, stats, failure handling
+- [x] **M2 Robustness**: backtracking with restart fallback, stats, wrapping edges
 - [ ] **M3 Authoring data**: tile set assets, rule checker, biomes
 - [ ] **M4 Runtime visualization**: Tilemap output, live stepping, entropy heatmap, demo scene
 - [ ] **M5 Editor tool**: WFC Studio window, pinned tiles, Undo

@@ -5,20 +5,41 @@ namespace WfcStudio.Core
     /// <summary>
     /// Wave Function Collapse solver for the tiled model on a W×H grid.
     /// Each <see cref="Step"/> collapses the undecided cell with the lowest weighted Shannon entropy,
-    /// then propagates the rules outward. The same rules, size and seed always produce the same map.
+    /// then propagates the rules outward. The same rules, size, seed and options always produce the same map.
     /// </summary>
     /// <remarks>
-    /// Cells are indexed <c>x + y * Width</c>, with y pointing up. Edges do not wrap.
-    /// A contradiction sets <see cref="Status"/> to <see cref="SolverStatus.Failed"/>; recovery is the caller's job.
+    /// Cells are indexed <c>x + y * Width</c>, with y pointing up.
+    /// On a contradiction the solver backtracks: it undoes the newest collapse, bans that tile in that cell and propagates again.
+    /// When the backtrack budget runs out it restarts from the state after construction and pins.
     /// </remarks>
     public sealed class WfcSolver
     {
         // Small enough never to outweigh a real entropy difference; only breaks ties.
         const double NoiseScale = 1e-6;
 
+        // One removal of tiles from one word of a cell's domain. The bits are enough to undo it.
+        struct TrailEntry
+        {
+            public int Cell;
+            public int Word;
+            public ulong Bits;
+        }
+
+        // One collapse made by Step, and where the trail stood before it.
+        struct Frame
+        {
+            public int TrailStart;
+            public int Cell;
+            public int Tile;
+        }
+
         readonly RuleTable _rules;
-        readonly Pcg32 _random;
+        readonly uint _seed;
+        readonly bool _wrapEdges;
+        readonly int _maxBacktracks;
+        readonly int _maxRestarts;
         readonly int _words;
+        Pcg32 _random;
 
         // Per cell: a bitset of the tiles it can still be, at words [cell * _words, (cell + 1) * _words).
         readonly ulong[] _domains;
@@ -28,7 +49,8 @@ namespace WfcStudio.Core
         readonly double[] _noise;
         int _undecidedCount;
 
-        // Scratch bitset of one tile set, reused by propagation and collapse.
+        // Bitset of every tile, and a scratch bitset reused by propagation, collapse and bans.
+        readonly ulong[] _allTiles;
         readonly ulong[] _mask;
 
         // Cells waiting to propagate. _queued keeps each cell in the stack at most once.
@@ -36,14 +58,23 @@ namespace WfcStudio.Core
         readonly bool[] _queued;
         int _stackSize;
 
+        // Removals since the first Step, newest last, and the collapses they belong to.
+        // Removals before the first Step (pruning and pins) are the base state and are never undone.
+        TrailEntry[] _trail;
+        int _trailLength;
+        readonly Frame[] _frames;
+        int _frameCount;
+        int _attemptBacktracks;
+
         // Cells whose domain changed during the last operation.
         readonly int[] _changed;
         readonly bool[] _isChanged;
         int _changedCount;
 
         bool _stepped;
+        bool _contradiction;
 
-        public WfcSolver(RuleTable rules, int width, int height, uint seed)
+        public WfcSolver(RuleTable rules, int width, int height, uint seed, SolverOptions options = null)
         {
             if (rules == null)
                 throw new ArgumentNullException(nameof(rules));
@@ -52,7 +83,17 @@ namespace WfcStudio.Core
             if (height < 1)
                 throw new ArgumentOutOfRangeException(nameof(height), height, "Height must be at least 1.");
 
+            options ??= new SolverOptions();
+            if (options.MaxBacktracks < 0)
+                throw new ArgumentOutOfRangeException(nameof(options), options.MaxBacktracks, "MaxBacktracks cannot be negative.");
+            if (options.MaxRestarts < 0)
+                throw new ArgumentOutOfRangeException(nameof(options), options.MaxRestarts, "MaxRestarts cannot be negative.");
+
             _rules = rules;
+            _seed = seed;
+            _wrapEdges = options.WrapEdges;
+            _maxBacktracks = options.MaxBacktracks;
+            _maxRestarts = options.MaxRestarts;
             _random = new Pcg32(seed);
             _words = rules.WordsPerSet;
             Width = width;
@@ -64,9 +105,12 @@ namespace WfcStudio.Core
             _sumWeights = new double[cellCount];
             _sumWeightLogWeights = new double[cellCount];
             _noise = new double[cellCount];
+            _allTiles = new ulong[_words];
             _mask = new ulong[_words];
             _stack = new int[cellCount];
             _queued = new bool[cellCount];
+            _trail = new TrailEntry[Math.Max(64, cellCount * _words)];
+            _frames = new Frame[cellCount];
             _changed = new int[cellCount];
             _isChanged = new bool[cellCount];
 
@@ -74,19 +118,19 @@ namespace WfcStudio.Core
             double sumWeightLogWeights = 0;
             for (int tile = 0; tile < rules.TileCount; tile++)
             {
-                Bitset.Set(_mask, 0, tile);
+                Bitset.Set(_allTiles, 0, tile);
                 sumWeights += rules.GetWeight(tile);
                 sumWeightLogWeights += rules.GetWeightLogWeight(tile);
             }
 
             for (int cell = 0; cell < cellCount; cell++)
             {
-                Array.Copy(_mask, 0, _domains, cell * _words, _words);
+                Array.Copy(_allTiles, 0, _domains, cell * _words, _words);
                 _possibleCount[cell] = rules.TileCount;
                 _sumWeights[cell] = sumWeights;
                 _sumWeightLogWeights[cell] = sumWeightLogWeights;
-                _noise[cell] = _random.NextDouble() * NoiseScale;
             }
+            DrawNoise();
 
             _undecidedCount = rules.TileCount > 1 ? cellCount : 0;
             Status = SolverStatus.Running;
@@ -95,6 +139,7 @@ namespace WfcStudio.Core
             for (int cell = 0; cell < cellCount; cell++)
                 Push(cell);
             Propagate();
+            FailIfContradiction();
             UpdateCompletion();
         }
 
@@ -106,10 +151,16 @@ namespace WfcStudio.Core
 
         public SolverStatus Status { get; private set; }
 
-        /// <summary>Number of cells collapsed by <see cref="Step"/> so far.</summary>
+        /// <summary>Collapses made by <see cref="Step"/>, including ones later undone.</summary>
         public int Steps { get; private set; }
 
-        /// <summary>Cells whose possible tiles changed during the last construction, <see cref="Pin"/> or <see cref="Step"/>.</summary>
+        /// <summary>Collapses undone by backtracking, across all attempts.</summary>
+        public int Backtracks { get; private set; }
+
+        /// <summary>Times the solver started over because the backtrack budget ran out.</summary>
+        public int Restarts { get; private set; }
+
+        /// <summary>Cells whose possible tiles changed during the last construction, <see cref="Pin"/> or <see cref="Step"/>, including cells restored by backtracking.</summary>
         public ReadOnlySpan<int> ChangedCells => new ReadOnlySpan<int>(_changed, 0, _changedCount);
 
         public int CellIndex(int x, int y)
@@ -119,7 +170,8 @@ namespace WfcStudio.Core
 
         /// <summary>
         /// Fixes cell (<paramref name="x"/>, <paramref name="y"/>) to <paramref name="tile"/> and propagates.
-        /// Pins must be set before the first <see cref="Step"/>. A pin that conflicts with the rules or another pin fails the solver.
+        /// Pins must be set before the first <see cref="Step"/> and are never undone.
+        /// A pin that conflicts with the rules or another pin fails the solver.
         /// </summary>
         public void Pin(int x, int y, int tile)
         {
@@ -144,6 +196,7 @@ namespace WfcStudio.Core
             }
 
             Collapse(cell, tile);
+            FailIfContradiction();
             UpdateCompletion();
         }
 
@@ -157,9 +210,15 @@ namespace WfcStudio.Core
             int cell = FindLowestEntropyCell();
             int tile = ChooseTile(cell);
             Steps++;
+            _frames[_frameCount++] = new Frame { TrailStart = _trailLength, Cell = cell, Tile = tile };
             Collapse(cell, tile);
+
+            bool backtracked = _contradiction;
+            if (_contradiction)
+                Recover();
+
             UpdateCompletion();
-            return new StepResult(Status, cell, tile);
+            return new StepResult(Status, cell, tile, backtracked);
         }
 
         /// <summary>Steps until the solver completes, fails, or has taken <paramref name="maxSteps"/> steps.</summary>
@@ -212,6 +271,12 @@ namespace WfcStudio.Core
         {
             double sumWeights = _sumWeights[cell];
             return Math.Log(sumWeights) - _sumWeightLogWeights[cell] / sumWeights;
+        }
+
+        void DrawNoise()
+        {
+            for (int cell = 0; cell < _noise.Length; cell++)
+                _noise[cell] = _random.NextDouble() * NoiseScale;
         }
 
         int FindLowestEntropyCell()
@@ -270,22 +335,89 @@ namespace WfcStudio.Core
             Propagate();
         }
 
+        // Undoes collapses until the state is consistent again, restarting or failing if the budget runs out.
+        void Recover()
+        {
+            while (_contradiction)
+            {
+                _contradiction = false;
+
+                // Every alternative from the base state has been ruled out: no solution exists.
+                if (_frameCount == 0)
+                {
+                    Status = SolverStatus.Failed;
+                    return;
+                }
+
+                if (_attemptBacktracks >= _maxBacktracks)
+                {
+                    Restart();
+                    return;
+                }
+
+                Frame frame = _frames[--_frameCount];
+                Undo(frame.TrailStart);
+                Backtracks++;
+                _attemptBacktracks++;
+
+                // The ban is recorded in the parent frame, so it is undone too if the solver backs up further.
+                Ban(frame.Cell, frame.Tile);
+            }
+        }
+
+        void Ban(int cell, int tile)
+        {
+            Array.Copy(_allTiles, _mask, _words);
+            _mask[tile >> 6] &= ~(1UL << (tile & 63));
+            Intersect(cell, _mask);
+            if (_contradiction)
+                return;
+
+            Push(cell);
+            Propagate();
+        }
+
+        void Restart()
+        {
+            Restarts++;
+            if (Restarts > _maxRestarts)
+            {
+                Status = SolverStatus.Failed;
+                return;
+            }
+
+            Undo(0);
+            _frameCount = 0;
+            _attemptBacktracks = 0;
+
+            // A new stream per restart, so each attempt explores a different map.
+            _random = new Pcg32(_seed, (ulong)Restarts);
+            DrawNoise();
+        }
+
         void Propagate()
         {
-            while (_stackSize > 0 && Status == SolverStatus.Running)
+            while (_stackSize > 0 && !_contradiction)
             {
                 int cell = _stack[--_stackSize];
                 _queued[cell] = false;
                 int x = cell % Width;
                 int y = cell / Width;
 
-                for (int d = 0; d < DirectionExtensions.Count && Status == SolverStatus.Running; d++)
+                for (int d = 0; d < DirectionExtensions.Count && !_contradiction; d++)
                 {
                     var direction = (Direction)d;
                     int neighbourX = x + direction.OffsetX();
                     int neighbourY = y + direction.OffsetY();
-                    if (neighbourX < 0 || neighbourX >= Width || neighbourY < 0 || neighbourY >= Height)
+                    if (_wrapEdges)
+                    {
+                        neighbourX = (neighbourX + Width) % Width;
+                        neighbourY = (neighbourY + Height) % Height;
+                    }
+                    else if (neighbourX < 0 || neighbourX >= Width || neighbourY < 0 || neighbourY >= Height)
+                    {
                         continue;
+                    }
 
                     int neighbour = CellIndex(neighbourX, neighbourY);
                     CollectAllowedNeighbours(cell, direction);
@@ -317,7 +449,8 @@ namespace WfcStudio.Core
             }
         }
 
-        // Removes every tile not in mask from the cell. Returns true if anything was removed.
+        // Removes every tile not in mask from the cell, recording the removal once stepping has begun.
+        // Returns true if anything was removed. An emptied cell flags a contradiction.
         bool Intersect(int cell, ulong[] mask)
         {
             int offset = cell * _words;
@@ -331,6 +464,9 @@ namespace WfcStudio.Core
                     continue;
 
                 _domains[offset + word] = current & mask[word];
+                if (_stepped)
+                    Record(cell, word, removed);
+
                 for (; removed != 0; removed &= removed - 1)
                 {
                     int tile = (word << 6) + Bitset.TrailingZeroCount(removed);
@@ -347,10 +483,51 @@ namespace WfcStudio.Core
             if (countBefore > 1 && countAfter <= 1)
                 _undecidedCount--;
             if (countAfter == 0)
-                Status = SolverStatus.Failed;
+                _contradiction = true;
 
             MarkChanged(cell);
             return true;
+        }
+
+        void Record(int cell, int word, ulong bits)
+        {
+            if (_trailLength == _trail.Length)
+                Array.Resize(ref _trail, _trail.Length * 2);
+
+            _trail[_trailLength++] = new TrailEntry { Cell = cell, Word = word, Bits = bits };
+        }
+
+        // Restores every removal recorded after the trail stood at trailLength, newest first.
+        void Undo(int trailLength)
+        {
+            while (_trailLength > trailLength)
+            {
+                TrailEntry entry = _trail[--_trailLength];
+                int cell = entry.Cell;
+                int countBefore = _possibleCount[cell];
+
+                _domains[cell * _words + entry.Word] |= entry.Bits;
+                for (ulong bits = entry.Bits; bits != 0; bits &= bits - 1)
+                {
+                    int tile = (entry.Word << 6) + Bitset.TrailingZeroCount(bits);
+                    _possibleCount[cell]++;
+                    _sumWeights[cell] += _rules.GetWeight(tile);
+                    _sumWeightLogWeights[cell] += _rules.GetWeightLogWeight(tile);
+                }
+
+                if (countBefore <= 1 && _possibleCount[cell] > 1)
+                    _undecidedCount++;
+                MarkChanged(cell);
+            }
+        }
+
+        void FailIfContradiction()
+        {
+            if (!_contradiction)
+                return;
+
+            _contradiction = false;
+            Status = SolverStatus.Failed;
         }
 
         void UpdateCompletion()

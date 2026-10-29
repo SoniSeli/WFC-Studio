@@ -8,18 +8,21 @@ namespace WfcStudio.Core
         /// <summary>Every cell holds exactly one tile, and all rules are satisfied.</summary>
         Completed,
 
-        /// <summary>A cell ran out of possible tiles (a contradiction).</summary>
+        /// <summary>
+        /// No solution was found: the rules and pins cannot be satisfied, or the backtrack and restart budget ran out.
+        /// </summary>
         Failed,
     }
 
     /// <summary>Outcome of one <see cref="WfcSolver.Step"/>.</summary>
     public readonly struct StepResult
     {
-        public StepResult(SolverStatus status, int cell, int tile)
+        public StepResult(SolverStatus status, int cell, int tile, bool backtracked = false)
         {
             Status = status;
             Cell = cell;
             Tile = tile;
+            Backtracked = backtracked;
         }
 
         /// <summary>Solver status after the step.</summary>
@@ -30,5 +33,8 @@ namespace WfcStudio.Core
 
         /// <summary>The tile chosen for <see cref="Cell"/>, or -1 if no cell was collapsed.</summary>
         public int Tile { get; }
+
+        /// <summary>True if the collapse led to a contradiction and was undone by backtracking or a restart.</summary>
+        public bool Backtracked { get; }
     }
 }
