@@ -1,0 +1,16 @@
+{
+    "name": "WfcStudio.Runtime",
+    "rootNamespace": "WfcStudio",
+    "references": [
+        "WfcStudio.Core"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

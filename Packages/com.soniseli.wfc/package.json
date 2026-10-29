@@ -1,0 +1,20 @@
+{
+  "name": "com.soniseli.wfc",
+  "displayName": "WFC Studio",
+  "version": "0.1.0",
+  "unity": "6000.3",
+  "description": "Designer-friendly procedural map generation using the Wave Function Collapse algorithm (tiled model). Deterministic, seeded solver with live visualization and editor tooling.",
+  "keywords": [
+    "wfc",
+    "wave function collapse",
+    "procedural generation",
+    "tilemap",
+    "level design"
+  ],
+  "author": {
+    "name": "Soni Seli",
+    "url": "https://soniseli.itch.io"
+  },
+  "license": "MIT",
+  "dependencies": {}
+}
