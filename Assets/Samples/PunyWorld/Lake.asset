@@ -1,0 +1,141 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 873f77f6f79a3d142b97f833b1044841, type: 3}
+  m_Name: Lake
+  m_EditorClassIdentifier: WfcStudio.Runtime::WfcStudio.TileSet
+  _sockets:
+  - _name: grass
+    _mate: 
+  - _name: lake-top
+    _mate: 
+  - _name: lake-left
+    _mate: 
+  - _name: lake
+    _mate: 
+  - _name: lake-right
+    _mate: 
+  - _name: lake-bottom
+    _mate: 
+  _tiles:
+  - _name: Grass
+    _tile: {fileID: 11400000, guid: c49fa40f1fc31b943aad961f7202bc9d, type: 2}
+    _weight: 8
+    _up: grass
+    _right: grass
+    _down: grass
+    _left: grass
+  - _name: Grass Tufts
+    _tile: {fileID: 11400000, guid: 19e6c8b0618993946a143f9241ad1778, type: 2}
+    _weight: 4
+    _up: grass
+    _right: grass
+    _down: grass
+    _left: grass
+  - _name: White Flowers
+    _tile: {fileID: 11400000, guid: 0364d242a9154ab44af438511c34f8d3, type: 2}
+    _weight: 0.4
+    _up: grass
+    _right: grass
+    _down: grass
+    _left: grass
+  - _name: Red Flowers
+    _tile: {fileID: 11400000, guid: 416642f247814254f80c563da2e18da7, type: 2}
+    _weight: 0.4
+    _up: grass
+    _right: grass
+    _down: grass
+    _left: grass
+  - _name: Bush
+    _tile: {fileID: 11400000, guid: 7432569274e4ccd4f87c83c3a45ffc41, type: 2}
+    _weight: 0.3
+    _up: grass
+    _right: grass
+    _down: grass
+    _left: grass
+  - _name: Stone
+    _tile: {fileID: 11400000, guid: d1d1fc157ac891342b11ae677c846e45, type: 2}
+    _weight: 0.3
+    _up: grass
+    _right: grass
+    _down: grass
+    _left: grass
+  - _name: Tree
+    _tile: {fileID: 11400000, guid: 614a3e36d8419db429f237061dba81cb, type: 2}
+    _weight: 0.6
+    _up: grass
+    _right: grass
+    _down: grass
+    _left: grass
+  - _name: Lake Top Left
+    _tile: {fileID: 11400000, guid: d8708d3d8c0768e4b86754aaa3e2f4e3, type: 2}
+    _weight: 1
+    _up: grass
+    _right: lake-top
+    _down: lake-left
+    _left: grass
+  - _name: Lake Top
+    _tile: {fileID: 11400000, guid: ccd1dd8faf7b97341b1cfc34e02ebfec, type: 2}
+    _weight: 1
+    _up: grass
+    _right: lake-top
+    _down: lake
+    _left: lake-top
+  - _name: Lake Top Right
+    _tile: {fileID: 11400000, guid: 6799738b5eec813418c84951ea697311, type: 2}
+    _weight: 1
+    _up: grass
+    _right: grass
+    _down: lake-right
+    _left: lake-top
+  - _name: Lake Left
+    _tile: {fileID: 11400000, guid: 6453b1fff3ac6134980b1ded93d2d8b0, type: 2}
+    _weight: 1
+    _up: lake-left
+    _right: lake
+    _down: lake-left
+    _left: grass
+  - _name: Lake Centre
+    _tile: {fileID: 11400000, guid: 0b7564191826e4042989ecad777c0fda, type: 2}
+    _weight: 2
+    _up: lake
+    _right: lake
+    _down: lake
+    _left: lake
+  - _name: Lake Right
+    _tile: {fileID: 11400000, guid: d4cc7f8887d1baf4a9d77006a1771c19, type: 2}
+    _weight: 1
+    _up: lake-right
+    _right: grass
+    _down: lake-right
+    _left: lake
+  - _name: Lake Bottom Left
+    _tile: {fileID: 11400000, guid: d236c49b0a888d04aa3a82d83b1e6a1a, type: 2}
+    _weight: 1
+    _up: lake-left
+    _right: lake-bottom
+    _down: grass
+    _left: grass
+  - _name: Lake Bottom
+    _tile: {fileID: 11400000, guid: a14593d4579bf07498e71672b4a617f7, type: 2}
+    _weight: 1
+    _up: lake
+    _right: lake-bottom
+    _down: grass
+    _left: lake-bottom
+  - _name: Lake Bottom Right
+    _tile: {fileID: 11400000, guid: b2d09c9f56d6e0945a60fd2932914e70, type: 2}
+    _weight: 1
+    _up: lake-right
+    _right: grass
+    _down: grass
+    _left: lake-bottom
+  _exceptions: []

@@ -6,7 +6,7 @@
 ![Unity 6.3 LTS](https://img.shields.io/badge/Unity-6.3%20LTS-black?logo=unity)
 ![License: MIT](https://img.shields.io/badge/license-MIT-blue)
 
-> **Status:** early development. The solver is done (M1–M2); tile set assets (M3) are next. See the [roadmap](#roadmap).
+> **Status:** early development. The solver and tile set assets are done (M1–M3); the live visualization and demo scene (M4) are next. See the [roadmap](#roadmap).
 
 <!-- M7: hero GIF of a map generating, with the entropy heatmap on -->
 
@@ -20,7 +20,8 @@ validated tile rules, and editor tooling a designer can use without writing code
 
 - **Deterministic solver in plain C#**: same seed, same map, on every platform. No `UnityEngine` dependency, fully unit tested.
 - **Weighted entropy and backtracking**: control how often each tile appears, and recover from contradictions instead of restarting.
-- **Validated tile sets**: tile sets are ScriptableObject assets, and a rule checker finds and fixes one-sided or missing rules.
+- **Edge sockets instead of neighbour lists**: label each tile edge, and matching edges may touch. Rules can never be one-sided, and a new tile needs only its own four labels. Exceptions cover the special cases.
+- **Validated tile sets**: tile sets are ScriptableObject assets. The checker explains problems in plain language, such as an unknown socket, a tile that can only appear at the map edge, or conflicting exceptions.
 - **Live visualization**: watch the map collapse step by step, with an entropy heatmap overlay.
 - **WFC Studio editor window**: paint the tiles you want fixed, then let WFC fill in the rest. Edit-mode generation with full Undo.
 - **Measured performance**: published benchmarks for 20×20 to 100×100 maps.
@@ -33,8 +34,10 @@ WFC-Studio/
 │  ├─ Runtime/Core/             WfcStudio.Core: solver, plain C#
 │  ├─ Runtime/Unity/            WfcStudio.Runtime: assets, Tilemap output, visualization
 │  └─ Tests/Editor/             WfcStudio.Tests: EditMode tests
-├─ Assets/                      Demo project (demo scene arrives in M4)
-└─ .github/workflows/           CI: EditMode tests on every push and PR
+├─ Assets/Samples/PunyWorld/    Sample tile sets: Meadow, Lake, Forest, Mountain, Castle, Overworld
+├─ Assets/Dev/Editor/           Tool that rebuilds the sample assets from code
+├─ Assets/Tests/Editor/         Tests that every sample validates and generates
+└─ .github/workflows/           CI: EditMode tests on every push to main
 ```
 
 ## Installing (from v0.1)
@@ -56,7 +59,7 @@ https://github.com/SoniSeli/WFC-Studio.git?path=/Packages/com.soniseli.wfc
 - [x] **M0 Foundation**: project, package skeleton, CI
 - [x] **M1 Core solver**: domains, propagation, weighted entropy, seeded RNG, pinned tiles
 - [x] **M2 Robustness**: backtracking with restart fallback, stats, wrapping edges
-- [ ] **M3 Authoring data**: tile set assets, rule checker, biomes
+- [x] **M3 Authoring data**: tile set assets with edge sockets, rule checker, Puny World biomes
 - [ ] **M4 Runtime visualization**: Tilemap output, live stepping, entropy heatmap, demo scene
 - [ ] **M5 Editor tool**: WFC Studio window, pinned tiles, Undo
 - [ ] **M6 Performance**: profiling, benchmarks, optional Burst solver
@@ -65,7 +68,7 @@ https://github.com/SoniSeli/WFC-Studio.git?path=/Packages/com.soniseli.wfc
 ## Credits
 
 - Wave Function Collapse was created by Maxim Gumin: [mxgmn/WaveFunctionCollapse](https://github.com/mxgmn/WaveFunctionCollapse).
-- Tile art: to be decided.
+- Sample tile art: [16x16 Puny World](https://merchant-shade.itch.io/16x16-puny-world) by merchant-shade, a rework of [16x16 Mini World Sprites](https://merchant-shade.itch.io/16x16-mini-world-sprites) by Kurt Gabriel Sotelo and octoshrimpy. Both are CC0; see [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
 
 ## License
 

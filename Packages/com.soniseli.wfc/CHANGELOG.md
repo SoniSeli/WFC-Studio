@@ -16,6 +16,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - Backtracking: contradictions undo the newest collapse exactly (from a trail of removals), ban that tile in that cell and propagate again. Pins are never undone. When `SolverOptions.MaxBacktracks` runs out, the solver restarts on a new random stream, up to `MaxRestarts` times.
 - `SolverOptions.WrapEdges`: opposite edges become neighbours, so maps tile seamlessly.
 - `Backtracks` and `Restarts` stats, and `StepResult.Backtracked`. Cells restored by backtracking are reported in `ChangedCells`.
+- `SocketTileSet` (Core): describes tiles by edge sockets. Matching sockets may touch, paired sockets match only each other, and exceptions allow or forbid single pairs. `Compile()` returns a `RuleTable` plus `ValidationIssue`s, which flag missing sockets, invalid weights, conflicting or redundant exceptions, unused sockets, tiles that can only appear at a map edge, and tiles that can't appear away from the edges.
+- `TileSet` asset (Runtime, **Create → WFC Studio → Tile Set**): socket labels, tile entries (tile, weight, four sockets) and exceptions, authored in one asset. Structural problems such as unknown socket names or missing and duplicate tiles are reported before the rules are analysed.
+- `RuleTable.Builder.Disallow`.
 
 ### Changed
 

@@ -28,6 +28,11 @@ namespace WfcStudio.Core
             words[offset + (bit >> 6)] |= 1UL << (bit & 63);
         }
 
+        public static void Clear(ulong[] words, int offset, int bit)
+        {
+            words[offset + (bit >> 6)] &= ~(1UL << (bit & 63));
+        }
+
         /// <summary>Index of the lowest set bit. <paramref name="value"/> must not be zero.</summary>
         public static int TrailingZeroCount(ulong value)
         {

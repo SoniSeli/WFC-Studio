@@ -1,0 +1,141 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 873f77f6f79a3d142b97f833b1044841, type: 3}
+  m_Name: Mountain
+  m_EditorClassIdentifier: WfcStudio.Runtime::WfcStudio.TileSet
+  _sockets:
+  - _name: grass
+    _mate: 
+  - _name: mountain-top
+    _mate: 
+  - _name: mountain-left
+    _mate: 
+  - _name: mountain
+    _mate: 
+  - _name: mountain-right
+    _mate: 
+  - _name: mountain-bottom
+    _mate: 
+  _tiles:
+  - _name: Grass
+    _tile: {fileID: 11400000, guid: c49fa40f1fc31b943aad961f7202bc9d, type: 2}
+    _weight: 8
+    _up: grass
+    _right: grass
+    _down: grass
+    _left: grass
+  - _name: Grass Tufts
+    _tile: {fileID: 11400000, guid: 19e6c8b0618993946a143f9241ad1778, type: 2}
+    _weight: 4
+    _up: grass
+    _right: grass
+    _down: grass
+    _left: grass
+  - _name: White Flowers
+    _tile: {fileID: 11400000, guid: 0364d242a9154ab44af438511c34f8d3, type: 2}
+    _weight: 0.4
+    _up: grass
+    _right: grass
+    _down: grass
+    _left: grass
+  - _name: Red Flowers
+    _tile: {fileID: 11400000, guid: 416642f247814254f80c563da2e18da7, type: 2}
+    _weight: 0.4
+    _up: grass
+    _right: grass
+    _down: grass
+    _left: grass
+  - _name: Bush
+    _tile: {fileID: 11400000, guid: 7432569274e4ccd4f87c83c3a45ffc41, type: 2}
+    _weight: 0.3
+    _up: grass
+    _right: grass
+    _down: grass
+    _left: grass
+  - _name: Stone
+    _tile: {fileID: 11400000, guid: d1d1fc157ac891342b11ae677c846e45, type: 2}
+    _weight: 0.3
+    _up: grass
+    _right: grass
+    _down: grass
+    _left: grass
+  - _name: Tree
+    _tile: {fileID: 11400000, guid: 614a3e36d8419db429f237061dba81cb, type: 2}
+    _weight: 0.6
+    _up: grass
+    _right: grass
+    _down: grass
+    _left: grass
+  - _name: Mountain Top Left
+    _tile: {fileID: 11400000, guid: 9a214feba5c14ae448083a5e7592da56, type: 2}
+    _weight: 1
+    _up: grass
+    _right: mountain-top
+    _down: mountain-left
+    _left: grass
+  - _name: Mountain Top
+    _tile: {fileID: 11400000, guid: beeaa13e46063f040bbcd09508fc069c, type: 2}
+    _weight: 1
+    _up: grass
+    _right: mountain-top
+    _down: mountain
+    _left: mountain-top
+  - _name: Mountain Top Right
+    _tile: {fileID: 11400000, guid: a6390e1a7250706459c068e887670851, type: 2}
+    _weight: 1
+    _up: grass
+    _right: grass
+    _down: mountain-right
+    _left: mountain-top
+  - _name: Mountain Left
+    _tile: {fileID: 11400000, guid: 14fb695207da27645a8de0a3a3b4766a, type: 2}
+    _weight: 1
+    _up: mountain-left
+    _right: mountain
+    _down: mountain-left
+    _left: grass
+  - _name: Mountain Centre
+    _tile: {fileID: 11400000, guid: 336db6cb9491e574b8f6ccc2eceffc61, type: 2}
+    _weight: 2
+    _up: mountain
+    _right: mountain
+    _down: mountain
+    _left: mountain
+  - _name: Mountain Right
+    _tile: {fileID: 11400000, guid: 6b720d3df4815cd41aab90997aa3c4a1, type: 2}
+    _weight: 1
+    _up: mountain-right
+    _right: grass
+    _down: mountain-right
+    _left: mountain
+  - _name: Mountain Bottom Left
+    _tile: {fileID: 11400000, guid: 6f7474aa13a17c44ab2d7fdd58b2476e, type: 2}
+    _weight: 1
+    _up: mountain-left
+    _right: mountain-bottom
+    _down: grass
+    _left: grass
+  - _name: Mountain Bottom
+    _tile: {fileID: 11400000, guid: 107be6e573b3f674dbf3abcd9778d5c9, type: 2}
+    _weight: 1
+    _up: mountain
+    _right: mountain-bottom
+    _down: grass
+    _left: mountain-bottom
+  - _name: Mountain Bottom Right
+    _tile: {fileID: 11400000, guid: 6a9e2ae72d5e4f448b5be2ffa21c2e82, type: 2}
+    _weight: 1
+    _up: mountain-right
+    _right: grass
+    _down: grass
+    _left: mountain-bottom
+  _exceptions: []

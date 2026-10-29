@@ -94,6 +94,17 @@ namespace WfcStudio.Core
                 return this;
             }
 
+            /// <summary>Removes the rule allowing <paramref name="neighbour"/> in <paramref name="direction"/> from <paramref name="tile"/>, and the reverse.</summary>
+            public Builder Disallow(int tile, Direction direction, int neighbour)
+            {
+                CheckTile(tile, nameof(tile));
+                CheckTile(neighbour, nameof(neighbour));
+
+                Bitset.Clear(_compatible, Offset(tile, direction), neighbour);
+                Bitset.Clear(_compatible, Offset(neighbour, direction.Opposite()), tile);
+                return this;
+            }
+
             public RuleTable Build()
             {
                 return new RuleTable(_tileCount, (ulong[])_compatible.Clone(), (double[])_weights.Clone());
