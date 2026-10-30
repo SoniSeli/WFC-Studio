@@ -6,7 +6,7 @@
 ![Unity 6.3 LTS](https://img.shields.io/badge/Unity-6.3%20LTS-black?logo=unity)
 ![License: MIT](https://img.shields.io/badge/license-MIT-blue)
 
-> **Status:** early development. The solver, tile set assets, live demo and WFC Studio editor window are done (M1–M5); performance work (M6) is next. See the [roadmap](#roadmap).
+> **Status:** early development. The solver, tile set assets, live demo, WFC Studio editor window and benchmarks are done; a public release with a WebGL demo is next.
 
 <!-- M7: hero GIF of a map generating, with the entropy heatmap on -->
 
@@ -24,7 +24,7 @@ validated tile rules, and editor tooling a designer can use without writing code
 - **Validated tile sets**: tile sets are ScriptableObject assets. The checker explains problems in plain language, such as an unknown socket, a tile that can only appear at the map edge, or conflicting exceptions.
 - **Live visualization**: watch the map collapse step by step, with an entropy heatmap overlay.
 - **WFC Studio editor window**: browse a tile set's tiles, weights and allowed neighbours, fix validation issues in one click, paint the tiles you want fixed with the Tile Palette, then let WFC fill in the rest. Edit-mode generation with full Undo.
-- **Measured performance**: published benchmarks for 20×20 to 100×100 maps.
+- **Measured performance**: a 100×100 map with all 61 sample tiles solves in about 56 ms in the Editor, with no garbage-collector allocations while solving. See [docs/BENCHMARKS.md](docs/BENCHMARKS.md).
 
 ## Repository layout
 
@@ -39,6 +39,7 @@ WFC-Studio/
 ├─ Assets/Samples/PunyWorld/    Sample tile sets: Meadow, Lake, Forest, Mountain, Castle, Overworld
 ├─ Assets/Dev/Editor/           Tools that rebuild the samples and demo scene from code, measure them, and make WebGL builds
 ├─ Assets/Tests/Editor/         Tests that every sample validates and generates
+├─ Assets/Tests/Performance/    Solver benchmarks (Performance Testing package), see docs/BENCHMARKS.md
 └─ .github/workflows/           CI: EditMode tests on every push to main
 ```
 
@@ -57,17 +58,6 @@ https://github.com/SoniSeli/WFC-Studio.git?path=/Packages/com.soniseli.wfc
 - Editor tool: open **Window → WFC Studio**. Pick or create a generator, choose a tile set, then generate in Edit mode. Ctrl+Z undoes any map. To pin tiles, use **Add Pins Tilemap**, **Create Tile Palette** and **Paint Pins**.
 - Run tests from **Window → General → Test Runner → EditMode**, or from a terminal with the Unity CLI:
   `unity test . --mode EditMode`
-
-## Roadmap
-
-- [x] **M0 Foundation**: project, package skeleton, CI
-- [x] **M1 Core solver**: domains, propagation, weighted entropy, seeded RNG, pinned tiles
-- [x] **M2 Robustness**: backtracking with restart fallback, stats, wrapping edges
-- [x] **M3 Authoring data**: tile set assets with edge sockets, rule checker, Puny World biomes
-- [x] **M4 Runtime visualization**: Tilemap output, live stepping, entropy heatmap, demo scene
-- [x] **M5 Editor tool**: WFC Studio window, tile browser, validation fixes, pinned tiles, edit-mode generation with Undo
-- [ ] **M6 Performance**: profiling, benchmarks, optional Burst solver
-- [ ] **M7 Release**: WebGL demo, docs, v1.0.0
 
 ## Credits
 

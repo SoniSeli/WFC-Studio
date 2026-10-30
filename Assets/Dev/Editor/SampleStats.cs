@@ -36,6 +36,70 @@ namespace WfcStudio.Dev
                 File.WriteAllText(args[index + 1], report);
         }
 
+        // Batch mode: -executeMethod WfcStudio.Dev.SampleStats.MeasureSizesFromCommandLine [-wfcStatsOut <file>]
+        public static void MeasureSizesFromCommandLine()
+        {
+            string report = RunSizes(new[] { "Lake", "Overworld" }, new[] { 20, 50, 100 }, 20);
+            Debug.Log(report);
+
+            string[] args = Environment.GetCommandLineArgs();
+            int index = Array.IndexOf(args, "-wfcStatsOut");
+            if (index >= 0 && index + 1 < args.Length)
+                File.WriteAllText(args[index + 1], report);
+        }
+
+        /// <summary>
+        /// Times whole maps at several sizes: setup (constructor and pruning) and solving separately, and time per step.
+        /// Allocations are checked by SolverAllocationTests and the benchmarks: GC.GetAllocatedBytesForCurrentThread
+        /// always reads 0 under Unity's Mono, so it can't be used here.
+        /// </summary>
+        public static string RunSizes(string[] setNames, int[] sizes, int seeds)
+        {
+            var report = new StringBuilder();
+            report.AppendLine($"{seeds} seeds per row, default options, after two warm-up maps");
+            report.AppendLine("set        | tiles | size    | setup ms | solve ms mean / p95 | µs/step | backtracks mean | failed");
+
+            foreach (string setName in setNames)
+            {
+                var rules = AssetDatabase.LoadAssetAtPath<TileSet>($"{SamplesFolder}/{setName}.asset").Compile().Rules;
+                new WfcSolver(rules, 20, 20, 999).Run();
+                new WfcSolver(rules, 20, 20, 998).Run();
+
+                foreach (int size in sizes)
+                {
+                    var setup = new List<double>();
+                    var solve = new List<double>();
+                    double stepMicros = 0;
+                    int backtracks = 0, failed = 0;
+
+                    for (uint seed = 0; seed < seeds; seed++)
+                    {
+                        var timer = Stopwatch.StartNew();
+                        var solver = new WfcSolver(rules, size, size, seed);
+                        setup.Add(timer.Elapsed.TotalMilliseconds);
+
+                        timer.Restart();
+                        var status = solver.Run();
+                        timer.Stop();
+
+                        solve.Add(timer.Elapsed.TotalMilliseconds);
+                        stepMicros += timer.Elapsed.TotalMilliseconds * 1000.0 / Math.Max(1, solver.Steps);
+                        backtracks += solver.Backtracks;
+                        if (status != SolverStatus.Completed)
+                            failed++;
+                    }
+
+                    solve.Sort();
+                    report.AppendLine(
+                        $"{setName,-10} | {rules.TileCount,5} | {size + "x" + size,-7} | {setup.Average(),8:0.0} | " +
+                        $"{solve.Average(),9:0.0} / {Percentile(solve, 0.95),7:0.0} | {stepMicros / seeds,7:0.0} | " +
+                        $"{(double)backtracks / seeds,15:0.0} | {failed,6}");
+                }
+            }
+
+            return report.ToString();
+        }
+
         // Biomes whose patch sizes are reported, since tile weights decide how big features grow. Mountains are left out:
         // their insides are plateau and terrace tiles, so a name match would undercount them.
         static readonly string[] PatchBiomes = { "Forest", "Lake" };

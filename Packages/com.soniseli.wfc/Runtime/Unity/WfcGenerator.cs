@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Unity.Profiling;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using WfcStudio.Core;
@@ -47,6 +48,10 @@ namespace WfcStudio
         bool _paused;
         double _stepDebt;
         readonly Stopwatch _solveTime = new Stopwatch();
+
+        // Named samples in the Unity Profiler, so a frame's solver time can be told apart from drawing the Tilemap.
+        static readonly ProfilerMarker SolveMarker = new ProfilerMarker("WfcGenerator.Solve");
+        static readonly ProfilerMarker RedrawMarker = new ProfilerMarker("WfcGenerator.Redraw");
 
         // Cells changed since the last redraw, collected across all steps of a frame.
         readonly List<int> _changed = new List<int>();
@@ -168,13 +173,13 @@ namespace WfcStudio
             if (!BeginMap())
                 return SolverStatus.Failed;
 
-            _solveTime.Start();
+            BeginSolve();
             while (_solver.Status == SolverStatus.Running)
             {
                 _solver.Step();
                 CollectChanges();
             }
-            _solveTime.Stop();
+            EndSolve();
 
             Redraw();
             return _solver.Status;
@@ -196,9 +201,9 @@ namespace WfcStudio
             if (!IsGenerating)
                 return;
 
-            _solveTime.Start();
+            BeginSolve();
             _solver.Step();
-            _solveTime.Stop();
+            EndSolve();
             CollectChanges();
             Redraw();
         }
@@ -209,13 +214,13 @@ namespace WfcStudio
             if (!IsGenerating)
                 return;
 
-            _solveTime.Start();
+            BeginSolve();
             while (_solver.Status == SolverStatus.Running)
             {
                 _solver.Step();
                 CollectChanges();
             }
-            _solveTime.Stop();
+            EndSolve();
             Redraw();
         }
 
@@ -258,7 +263,7 @@ namespace WfcStudio
 
             long budgetTicks = (long)(_frameBudgetMilliseconds * Stopwatch.Frequency / 1000.0);
             long frameStart = Stopwatch.GetTimestamp();
-            _solveTime.Start();
+            BeginSolve();
             for (int i = 0; i < steps && _solver.Status == SolverStatus.Running; i++)
             {
                 _solver.Step();
@@ -271,7 +276,7 @@ namespace WfcStudio
                     break;
                 }
             }
-            _solveTime.Stop();
+            EndSolve();
             Redraw();
         }
 
@@ -361,6 +366,18 @@ namespace WfcStudio
                 Debug.LogWarning("The pinned tiles conflict with the tile set's rules or with each other, so no map can include them all.", _pins);
         }
 
+        void BeginSolve()
+        {
+            SolveMarker.Begin();
+            _solveTime.Start();
+        }
+
+        void EndSolve()
+        {
+            _solveTime.Stop();
+            SolveMarker.End();
+        }
+
         void CollectChanges()
         {
             foreach (int cell in _solver.ChangedCells)
@@ -381,16 +398,19 @@ namespace WfcStudio
             if (_changed.Count == 0)
                 return;
 
-            var positions = new Vector3Int[_changed.Count];
-            var tiles = new TileBase[_changed.Count];
-            for (int i = 0; i < _changed.Count; i++)
+            using (RedrawMarker.Auto())
             {
-                int cell = _changed[i];
-                positions[i] = CellToTilemap(cell);
-                int tile = _solver.GetTile(cell);
-                tiles[i] = tile >= 0 ? _tileSet.Tiles[tile].Tile : _undecidedTile;
+                var positions = new Vector3Int[_changed.Count];
+                var tiles = new TileBase[_changed.Count];
+                for (int i = 0; i < _changed.Count; i++)
+                {
+                    int cell = _changed[i];
+                    positions[i] = CellToTilemap(cell);
+                    int tile = _solver.GetTile(cell);
+                    tiles[i] = tile >= 0 ? _tileSet.Tiles[tile].Tile : _undecidedTile;
+                }
+                _tilemap.SetTiles(positions, tiles);
             }
-            _tilemap.SetTiles(positions, tiles);
 
             Redrawn?.Invoke(this);
 

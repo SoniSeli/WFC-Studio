@@ -11,11 +11,17 @@ namespace WfcStudio.Core
         const ulong Multiplier = 6364136223846793005UL;
 
         ulong _state;
-        readonly ulong _increment;
+        ulong _increment;
 
         /// <param name="seed">Starting state.</param>
         /// <param name="sequence">Selects one of 2^63 independent streams.</param>
         public Pcg32(ulong seed, ulong sequence = 0)
+        {
+            Reset(seed, sequence);
+        }
+
+        /// <summary>Restarts the generator as if newly constructed, without allocating a new one.</summary>
+        public void Reset(ulong seed, ulong sequence = 0)
         {
             _increment = (sequence << 1) | 1UL;
             _state = 0;

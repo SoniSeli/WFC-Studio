@@ -54,6 +54,8 @@ jobs:
           # Keep the version in step with ProjectSettings/ProjectVersion.txt.
           customImage: unityci/editor:ubuntu-6000.3.25f1-base-3
           testMode: editmode
+          # Benchmarks run locally on the reference machine; shared runners give noisy timings.
+          customParameters: -testCategory "!Performance"
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           checkName: EditMode test results
 

@@ -39,7 +39,7 @@ namespace WfcStudio.Core
         readonly int _maxBacktracks;
         readonly int _maxRestarts;
         readonly int _words;
-        Pcg32 _random;
+        readonly Pcg32 _random;
 
         // Per cell: a bitset of the tiles it can still be, at words [cell * _words, (cell + 1) * _words).
         readonly ulong[] _domains;
@@ -48,6 +48,13 @@ namespace WfcStudio.Core
         readonly double[] _sumWeightLogWeights;
         readonly double[] _noise;
         int _undecidedCount;
+
+        // Undecided cells by entropy plus noise, so each step finds the next cell without scanning the grid.
+        // Cells whose domain changed wait in _stale and are re-keyed once, just before the next pick.
+        readonly EntropyHeap _heap;
+        readonly int[] _stale;
+        readonly bool[] _isStale;
+        int _staleCount;
 
         // Bitset of every tile, and a scratch bitset reused by propagation, collapse and bans.
         readonly ulong[] _allTiles;
@@ -109,10 +116,16 @@ namespace WfcStudio.Core
             _mask = new ulong[_words];
             _stack = new int[cellCount];
             _queued = new bool[cellCount];
-            _trail = new TrailEntry[Math.Max(64, cellCount * _words)];
+            // Every entry removes at least one tile, and at most TileCount - 1 can be removed per cell, so the trail never
+            // outgrows this and stepping never allocates (NFR2). Measured peaks are about a third of it; doubling from a
+            // smaller start allocated the same total, in five steps, during solving.
+            _trail = new TrailEntry[Math.Max(64, cellCount * (rules.TileCount - 1))];
             _frames = new Frame[cellCount];
             _changed = new int[cellCount];
             _isChanged = new bool[cellCount];
+            _heap = new EntropyHeap(cellCount);
+            _stale = new int[cellCount];
+            _isStale = new bool[cellCount];
 
             double sumWeights = 0;
             double sumWeightLogWeights = 0;
@@ -131,6 +144,7 @@ namespace WfcStudio.Core
                 _sumWeightLogWeights[cell] = sumWeightLogWeights;
             }
             DrawNoise();
+            MarkAllStale();
 
             _undecidedCount = rules.TileCount > 1 ? cellCount : 0;
             Status = SolverStatus.Running;
@@ -279,23 +293,36 @@ namespace WfcStudio.Core
                 _noise[cell] = _random.NextDouble() * NoiseScale;
         }
 
+        // Picks the undecided cell with the lowest entropy plus noise; on an exact tie, the lowest cell index.
         int FindLowestEntropyCell()
         {
-            int best = -1;
-            double bestEntropy = double.MaxValue;
-            for (int cell = 0; cell < _possibleCount.Length; cell++)
+            for (int i = 0; i < _staleCount; i++)
             {
-                if (_possibleCount[cell] <= 1)
-                    continue;
-
-                double entropy = Entropy(cell) + _noise[cell];
-                if (entropy < bestEntropy)
-                {
-                    bestEntropy = entropy;
-                    best = cell;
-                }
+                int cell = _stale[i];
+                _isStale[cell] = false;
+                if (_possibleCount[cell] > 1)
+                    _heap.Set(cell, Entropy(cell) + _noise[cell]);
+                else
+                    _heap.Remove(cell);
             }
-            return best;
+            _staleCount = 0;
+
+            return _heap.Count > 0 ? _heap.Min : -1;
+        }
+
+        void MarkStale(int cell)
+        {
+            if (_isStale[cell])
+                return;
+
+            _isStale[cell] = true;
+            _stale[_staleCount++] = cell;
+        }
+
+        void MarkAllStale()
+        {
+            for (int cell = 0; cell < _possibleCount.Length; cell++)
+                MarkStale(cell);
         }
 
         // Picks one of the cell's remaining tiles at random, in proportion to its weight.
@@ -391,8 +418,12 @@ namespace WfcStudio.Core
             _attemptBacktracks = 0;
 
             // A new stream per restart, so each attempt explores a different map.
-            _random = new Pcg32(_seed, (ulong)Restarts);
+            _random.Reset(_seed, (ulong)Restarts);
             DrawNoise();
+
+            // New noise changes every key.
+            _heap.Clear();
+            MarkAllStale();
         }
 
         void Propagate()
@@ -434,8 +465,20 @@ namespace WfcStudio.Core
         // Fills _mask with every tile that some remaining tile of the cell allows in the given direction.
         void CollectAllowedNeighbours(int cell, Direction direction)
         {
-            Array.Clear(_mask, 0, _words);
             ulong[] compatible = _rules.Compatible;
+
+            // Up to 64 tiles fit one word: build the union in a local rather than through the array.
+            if (_words == 1)
+            {
+                ulong union = 0;
+                int stride = DirectionExtensions.Count;
+                for (ulong bits = _domains[cell]; bits != 0; bits &= bits - 1)
+                    union |= compatible[Bitset.TrailingZeroCount(bits) * stride + (int)direction];
+                _mask[0] = union;
+                return;
+            }
+
+            Array.Clear(_mask, 0, _words);
             int offset = cell * _words;
             for (int word = 0; word < _words; word++)
             {
@@ -486,11 +529,13 @@ namespace WfcStudio.Core
                 _contradiction = true;
 
             MarkChanged(cell);
+            MarkStale(cell);
             return true;
         }
 
         void Record(int cell, int word, ulong bits)
         {
+            // Unreachable with the capacity set in the constructor; kept as a safety net.
             if (_trailLength == _trail.Length)
                 Array.Resize(ref _trail, _trail.Length * 2);
 
@@ -518,6 +563,7 @@ namespace WfcStudio.Core
                 if (countBefore <= 1 && _possibleCount[cell] > 1)
                     _undecidedCount++;
                 MarkChanged(cell);
+                MarkStale(cell);
             }
         }
 
