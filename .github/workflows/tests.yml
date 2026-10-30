@@ -101,7 +101,7 @@ jobs:
             "testables": ["com.soniseli.wfc"]
           }
           JSON
-          echo "m_EditorVersion: 6000.0.54f1" > CleanProject/ProjectSettings/ProjectVersion.txt
+          echo "m_EditorVersion: 6000.0.85f1" > CleanProject/ProjectSettings/ProjectVersion.txt
 
       - uses: game-ci/unity-test-runner@v4
         env:
@@ -110,7 +110,7 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           projectPath: CleanProject
-          customImage: unityci/editor:ubuntu-6000.0.54f1-base-3
+          customImage: unityci/editor:ubuntu-6000.0.85f1-base-3
           testMode: editmode
           artifactsPath: package-artifacts
           githubToken: ${{ secrets.GITHUB_TOKEN }}
