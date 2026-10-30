@@ -1,0 +1,58 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+  <ui:Style src="WfcStudioWindow.uss" />
+  <ui:ScrollView name="root" class="wfc-window">
+    <ui:Label text="WFC Studio" class="title" />
+    <ui:Label text="Generate Wave Function Collapse maps into a Tilemap, in Edit or Play mode." class="subtitle" />
+
+    <ui:Foldout name="setupSection" text="Setup" view-data-key="wfc-setup" class="section">
+      <uie:ObjectField name="generator" label="Generator" allow-scene-objects="true" class="unity-base-field__aligned" />
+      <ui:VisualElement name="noGenerator">
+        <ui:Label text="Pick a WFC Generator in the scene, or create one with a Grid and a Tilemap." class="hint" />
+        <ui:Button name="createGenerator" text="Create Generator" />
+      </ui:VisualElement>
+      <ui:VisualElement name="generatorSettings">
+        <uie:ObjectField name="tilemap" label="Tilemap" binding-path="_tilemap" allow-scene-objects="true" class="unity-base-field__aligned" />
+        <uie:ObjectField name="tileSet" label="Tile Set" binding-path="_tileSet" class="unity-base-field__aligned" />
+        <ui:Label name="tileSetSummary" class="hint" />
+      </ui:VisualElement>
+    </ui:Foldout>
+
+    <ui:Foldout name="generateSection" text="Generate" view-data-key="wfc-generate" class="section">
+      <ui:Vector2IntField name="size" label="Size" binding-path="_size" class="unity-base-field__aligned" />
+      <ui:VisualElement class="row">
+        <ui:IntegerField name="seed" label="Seed" binding-path="_seed" class="grow unity-base-field__aligned" />
+        <ui:Button name="randomSeed" text="Random" />
+      </ui:VisualElement>
+      <ui:Toggle name="wrapEdges" label="Wrap Edges" binding-path="_wrapEdges" class="unity-base-field__aligned" />
+      <ui:FloatField name="stepsPerSecond" label="Steps per Second" binding-path="_stepsPerSecond" class="unity-base-field__aligned" />
+
+      <ui:VisualElement class="row buttons">
+        <ui:Button name="generate" text="Generate" class="primary" />
+        <ui:Button name="instant" text="Instant" />
+      </ui:VisualElement>
+      <ui:VisualElement class="row buttons">
+        <ui:Button name="pause" text="Pause" />
+        <ui:Button name="step" text="Step" />
+        <ui:Button name="finish" text="Finish" />
+        <ui:Button name="clear" text="Clear" />
+      </ui:VisualElement>
+      <ui:Label name="status" class="status" />
+    </ui:Foldout>
+
+    <ui:Foldout name="tilesSection" text="Tiles" view-data-key="wfc-tiles" class="section">
+      <uie:ToolbarSearchField name="tileSearch" class="tile-search" />
+      <ui:ListView name="tileList" class="tile-list" />
+      <ui:Label name="tileListHint" class="hint" />
+      <ui:VisualElement name="adjacency" class="adjacency">
+        <ui:VisualElement class="row">
+          <ui:VisualElement name="selectedPreview" />
+          <ui:VisualElement class="grow">
+            <ui:Label name="selectedName" class="selected-name" />
+            <ui:Label name="selectedSockets" class="hint" />
+          </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="neighbours" />
+      </ui:VisualElement>
+    </ui:Foldout>
+  </ui:ScrollView>
+</ui:UXML>

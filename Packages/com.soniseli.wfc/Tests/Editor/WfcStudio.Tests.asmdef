@@ -5,7 +5,8 @@
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
         "WfcStudio.Core",
-        "WfcStudio.Runtime"
+        "WfcStudio.Runtime",
+        "WfcStudio.Editor"
     ],
     "includePlatforms": [
         "Editor"

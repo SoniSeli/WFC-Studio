@@ -22,6 +22,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - `WfcGenerator` component: runs the solver on a `TileSet` and draws into a `Tilemap`, redrawing only changed cells in one batch per frame. Advances a set number of steps per second from `Update`, capped by a per-frame time budget so large maps never stall a frame. Has `Generate`, `GenerateInstantly`, `Pause`, `Resume`, `StepOnce`, `Complete` and `Clear`, an optional placeholder tile for undecided cells, solver time, and `Started` and `Redrawn` events.
 - `EntropyHeatmap` component: overlays each undecided cell's entropy, one texel per cell, with a configurable gradient.
 - `TilePopAnimation` component: tiles pop into place through Tilemap cell transforms, without extra GameObjects.
+- `WfcStudio.Editor` assembly and the **Window → WFC Studio** window (UI Toolkit): pick or create a generator, choose its Tilemap and tile set (with a tile, socket and issue summary), and set size, seed, edge wrapping and speed. Generate live, instantly or step by step, then pause, finish or clear. Fields are bound to the generator's serialized properties, so they support Undo like the Inspector.
+- WFC Studio window, **Tiles** section: a searchable tile list with sprite thumbnails, each tile's share of the total weight and an editable weight (bound to the tile set asset, with Undo). Selecting a tile shows its sockets and, for each side, every tile allowed there after socket rules and exceptions; click a neighbour to jump to it, double-click a tile to select its asset.
+- Edit-mode generation: outside Play mode, an `EditorApplication.update` callback steps the solver at the generator's rate and frame budget. Each generate, step-started map and clear is one Undo step, including live generation that runs over many frames.
 
 ### Changed
 

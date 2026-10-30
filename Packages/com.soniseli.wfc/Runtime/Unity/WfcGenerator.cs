@@ -216,7 +216,15 @@ namespace WfcStudio
                 _tilemap.ClearAllTiles();
         }
 
-        // Advances the solver by the steps owed for deltaTime, within the frame budget. Called from Update; public to tests.
+        // Forgets the current map but leaves the Tilemap alone, for when Undo has already restored the tiles.
+        internal void DiscardMap()
+        {
+            _solver = null;
+            _changed.Clear();
+        }
+
+        // Advances the solver by the steps owed for deltaTime, within the frame budget. Called from Update in Play mode
+        // and by the editor's update loop in Edit mode; visible to tests.
         internal void Tick(float deltaTime)
         {
             if (!IsGenerating || _paused)

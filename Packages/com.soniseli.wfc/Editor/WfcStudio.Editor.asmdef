@@ -1,0 +1,19 @@
+{
+  "name": "WfcStudio.Editor",
+  "rootNamespace": "WfcStudio.Editor",
+  "references": [
+    "WfcStudio.Core",
+    "WfcStudio.Runtime"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}
