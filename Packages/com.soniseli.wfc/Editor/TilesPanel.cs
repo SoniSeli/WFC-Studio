@@ -194,8 +194,8 @@ namespace WfcStudio.Editor
             }
         }
 
-        // Selects a tile in the list, clearing the search if it hides that tile.
-        void Reveal(int tile)
+        /// <summary>Selects a tile in the list and shows its neighbours, clearing the search if it hides that tile.</summary>
+        public void ShowTile(int tile)
         {
             if (!_visible.Contains(tile))
             {
@@ -246,7 +246,7 @@ namespace WfcStudio.Editor
                     thumb.AddToClassList("neighbour");
                     SetThumbnail(thumb, _tileSet.Tiles[neighbour].Tile);
                     int target = neighbour;
-                    thumb.RegisterCallback<ClickEvent>(_ => Reveal(target));
+                    thumb.RegisterCallback<ClickEvent>(_ => ShowTile(target));
                     thumbs.Add(thumb);
                 }
                 if (neighbours.Count == 0)

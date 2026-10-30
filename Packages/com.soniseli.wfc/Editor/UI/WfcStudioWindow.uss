@@ -57,6 +57,35 @@
   white-space: normal;
 }
 
+.issue {
+  margin: 2px 3px;
+  padding: 3px 6px;
+  border-left-width: 3px;
+  background-color: rgba(128, 128, 128, 0.08);
+}
+
+.issue--error {
+  border-left-color: rgb(222, 72, 64);
+}
+
+.issue--warning {
+  border-left-color: rgb(230, 175, 46);
+}
+
+.issue--info {
+  border-left-color: rgb(110, 150, 200);
+}
+
+.issue-message {
+  white-space: normal;
+}
+
+.issue-actions {
+  flex-direction: row;
+  justify-content: flex-end;
+  margin-top: 2px;
+}
+
 .tile-search {
   width: auto;
   margin: 2px 3px 4px 3px;

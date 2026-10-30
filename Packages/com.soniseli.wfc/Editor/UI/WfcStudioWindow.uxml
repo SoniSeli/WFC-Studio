@@ -17,6 +17,21 @@
       </ui:VisualElement>
     </ui:Foldout>
 
+    <ui:Foldout name="validationSection" text="Validation" view-data-key="wfc-validation" class="section">
+      <ui:VisualElement name="issues" />
+    </ui:Foldout>
+
+    <ui:Foldout name="pinsSection" text="Pins" view-data-key="wfc-pins" class="section">
+      <uie:ObjectField name="pins" label="Pins Tilemap" binding-path="_pins" allow-scene-objects="true" class="unity-base-field__aligned" />
+      <ui:Label name="pinsSummary" class="hint" />
+      <ui:VisualElement class="row buttons">
+        <ui:Button name="addPins" text="Add Pins Tilemap" />
+        <ui:Button name="paintPins" text="Paint Pins" />
+        <ui:Button name="clearPins" text="Clear Pins" />
+        <ui:Button name="createPalette" text="Create Tile Palette" />
+      </ui:VisualElement>
+    </ui:Foldout>
+
     <ui:Foldout name="generateSection" text="Generate" view-data-key="wfc-generate" class="section">
       <ui:Vector2IntField name="size" label="Size" binding-path="_size" class="unity-base-field__aligned" />
       <ui:VisualElement class="row">

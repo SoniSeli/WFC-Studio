@@ -21,6 +21,10 @@ namespace WfcStudio
         [SerializeField] Tilemap _tilemap;
         [SerializeField] Vector2Int _size = new Vector2Int(32, 20);
 
+        [Tooltip("Optional Tilemap of pinned tiles, painted with the Tile Palette. Each tile on it inside the map area is " +
+            "fixed before a map is generated, and the rest of the map is built around it.")]
+        [SerializeField] Tilemap _pins;
+
         [Tooltip("Tilemap cell where solver cell (0, 0) is drawn.")]
         [SerializeField] Vector3Int _origin;
 
@@ -64,6 +68,13 @@ namespace WfcStudio
         {
             get => _tilemap;
             set => _tilemap = value;
+        }
+
+        /// <summary>Tilemap whose tiles are pinned before each map, or null for none. Read at the same cells the map is drawn to.</summary>
+        public Tilemap Pins
+        {
+            get => _pins;
+            set => _pins = value;
         }
 
         public Vector2Int Size
@@ -284,6 +295,7 @@ namespace WfcStudio
             _rules = compilation.Rules;
             var options = new SolverOptions { WrapEdges = _wrapEdges };
             _solver = new WfcSolver(_rules, _size.x, _size.y, unchecked((uint)_seed), options);
+            ApplyPins();
             _stepDebt = 0;
             _solveTime.Reset();
 
@@ -301,6 +313,52 @@ namespace WfcStudio
             Started?.Invoke(this);
             Redraw();
             return true;
+        }
+
+        /// <summary>
+        /// The pins inside the map area: every cell of <see cref="Pins"/> at <c>origin + (x, y)</c> holding a tile from the
+        /// tile set, as solver cell and tile id. Cells holding other tiles are counted in <paramref name="unknown"/>.
+        /// </summary>
+        internal List<(int X, int Y, int Tile)> ReadPins(out int unknown)
+        {
+            var pins = new List<(int X, int Y, int Tile)>();
+            unknown = 0;
+            if (_pins == null || _tileSet == null)
+                return pins;
+
+            var ids = new Dictionary<TileBase, int>();
+            for (int i = 0; i < _tileSet.Tiles.Count; i++)
+                if (_tileSet.Tiles[i].Tile != null && !ids.ContainsKey(_tileSet.Tiles[i].Tile))
+                    ids.Add(_tileSet.Tiles[i].Tile, i);
+
+            for (int y = 0; y < _size.y; y++)
+            {
+                for (int x = 0; x < _size.x; x++)
+                {
+                    var tile = _pins.GetTile(new Vector3Int(_origin.x + x, _origin.y + y, _origin.z));
+                    if (tile == null)
+                        continue;
+
+                    if (ids.TryGetValue(tile, out int id))
+                        pins.Add((x, y, id));
+                    else
+                        unknown++;
+                }
+            }
+            return pins;
+        }
+
+        void ApplyPins()
+        {
+            var pins = ReadPins(out int unknown);
+            if (unknown > 0)
+                Debug.LogWarning($"{unknown} pinned cell(s) hold tiles that aren't in '{_tileSet.name}', so they were ignored.", _pins);
+
+            foreach (var (x, y, tile) in pins)
+                _solver.Pin(x, y, tile);
+
+            if (pins.Count > 0 && _solver.Status == SolverStatus.Failed)
+                Debug.LogWarning("The pinned tiles conflict with the tile set's rules or with each other, so no map can include them all.", _pins);
         }
 
         void CollectChanges()

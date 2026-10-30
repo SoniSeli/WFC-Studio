@@ -6,7 +6,8 @@
         "UnityEditor.TestRunner",
         "WfcStudio.Core",
         "WfcStudio.Runtime",
-        "WfcStudio.Editor"
+        "WfcStudio.Editor",
+        "Unity.2D.Tilemap.Editor"
     ],
     "includePlatforms": [
         "Editor"

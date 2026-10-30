@@ -21,6 +21,9 @@ namespace WfcStudio.Editor
 
         EditModeGeneration _session;
         TilesPanel _tiles;
+        ValidationPanel _validation;
+        PinsPanel _pins;
+        VisualElement _pinsSection;
         TileSet _tileSet;
         ObjectField _generatorField;
         VisualElement _noGenerator;
@@ -65,8 +68,21 @@ namespace WfcStudio.Editor
             // The event carries the new value; the generator's field may not be written yet when it arrives.
             tileSetField.RegisterValueChangedCallback(evt => ShowTileSet(evt.newValue as TileSet));
 
-            _tiles = new TilesPanel(root.Q("tilesSection"));
-            _tiles.Edited += RefreshTileSetSummary;
+            var tilesSection = root.Q<Foldout>("tilesSection");
+            _tiles = new TilesPanel(tilesSection);
+            _validation = new ValidationPanel(root.Q<Foldout>("validationSection"));
+            _tiles.Edited += () =>
+            {
+                RefreshTileSetSummary();
+                _validation.Refresh();
+            };
+            _validation.ShowTileRequested += tile =>
+            {
+                tilesSection.value = true;
+                _tiles.ShowTile(tile);
+                var scroll = root.Q<ScrollView>("root");
+                scroll.schedule.Execute(() => scroll.ScrollTo(root.Q("adjacency")));
+            };
 
             root.Q<Button>("createGenerator").clicked += CreateGenerator;
             root.Q<Button>("randomSeed").clicked += () => _seed.value = Random.Range(1, 100000);
@@ -77,8 +93,16 @@ namespace WfcStudio.Editor
             _finish.clicked += () => _session?.Complete();
             root.Q<Button>("clear").clicked += () => _session?.Clear();
 
-            // Play mode generation runs from the generator's own Update, so poll rather than wait for our events.
-            root.schedule.Execute(RefreshStatus).Every(100);
+            _pinsSection = root.Q("pinsSection");
+            _pins = new PinsPanel(_pinsSection);
+
+            // Play mode generation runs from the generator's own Update, and pins are painted in the Scene view,
+            // so poll rather than wait for our own events.
+            root.schedule.Execute(() =>
+            {
+                RefreshStatus();
+                _pins.Refresh();
+            }).Every(100);
 
             SetGenerator(_generator != null ? _generator : FindGenerator());
         }
@@ -114,22 +138,19 @@ namespace WfcStudio.Editor
 
             bool hasGenerator = generator != null;
             _noGenerator.EnableInClassList("hidden", hasGenerator);
-            _generatorSettings.EnableInClassList("hidden", !hasGenerator);
-            _generateSection.EnableInClassList("hidden", !hasGenerator);
 
             // Bind only the generator's own fields: the Tiles section is bound to the tile set asset instead.
-            if (hasGenerator)
+            var serialized = hasGenerator ? new SerializedObject(generator) : null;
+            foreach (var section in new[] { _generatorSettings, _pinsSection, _generateSection })
             {
-                var serialized = new SerializedObject(generator);
-                _generatorSettings.Bind(serialized);
-                _generateSection.Bind(serialized);
-            }
-            else
-            {
-                _generatorSettings.Unbind();
-                _generateSection.Unbind();
+                section.EnableInClassList("hidden", !hasGenerator);
+                if (hasGenerator)
+                    section.Bind(serialized);
+                else
+                    section.Unbind();
             }
 
+            _pins.SetGenerator(generator);
             ShowTileSet(hasGenerator ? generator.TileSet : null);
             RefreshStatus();
         }
@@ -171,6 +192,7 @@ namespace WfcStudio.Editor
         {
             _tileSet = tileSet;
             _tiles.SetTileSet(tileSet);
+            _validation.SetTileSet(tileSet);
             RefreshTileSetSummary();
         }
 

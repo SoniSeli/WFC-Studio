@@ -3,7 +3,8 @@
   "rootNamespace": "WfcStudio.Editor",
   "references": [
     "WfcStudio.Core",
-    "WfcStudio.Runtime"
+    "WfcStudio.Runtime",
+    "Unity.2D.Tilemap.Editor"
   ],
   "includePlatforms": [
     "Editor"
