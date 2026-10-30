@@ -55,9 +55,17 @@ jobs:
           customImage: unityci/editor:ubuntu-6000.3.25f1-base-3
           testMode: editmode
           # Benchmarks run locally on the reference machine; shared runners give noisy timings.
-          customParameters: -testCategory "!Performance"
+          # No quotes: game-ci passes them through, and the filter then matches no test at all.
+          customParameters: -testCategory !Performance
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           checkName: EditMode test results
+
+      # A run that executes no tests still reports success, so fail it here instead.
+      - name: Check that tests ran
+        run: |
+          total=$(grep -o 'total="[0-9]*"' artifacts/editmode-results.xml | head -1 | grep -o '[0-9]*')
+          echo "Tests run: ${total:-none}"
+          test "${total:-0}" -gt 0
 
       - uses: actions/upload-artifact@v7
         if: always()
