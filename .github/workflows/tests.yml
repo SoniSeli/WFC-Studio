@@ -72,3 +72,58 @@ jobs:
         with:
           name: test-results
           path: artifacts
+
+  # The package supports Unity 6000.0 and later. Install it on its own into an empty 6000.0 project, as a user
+  # would, and run its tests there: this catches newer-only APIs and anything that depends on the dev project.
+  package-6000-0:
+    name: Package tests on 6000.0
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL /usr/local/share/boost
+          sudo docker image prune --all --force
+          df -h /
+
+      - uses: actions/checkout@v7
+        with:
+          lfs: true
+
+      - name: Create an empty project that uses the package
+        run: |
+          mkdir -p CleanProject/Assets CleanProject/Packages CleanProject/ProjectSettings
+          cat > CleanProject/Packages/manifest.json <<'JSON'
+          {
+            "dependencies": {
+              "com.soniseli.wfc": "file:../../Packages/com.soniseli.wfc",
+              "com.unity.test-framework": "1.5.1"
+            },
+            "testables": ["com.soniseli.wfc"]
+          }
+          JSON
+          echo "m_EditorVersion: 6000.0.54f1" > CleanProject/ProjectSettings/ProjectVersion.txt
+
+      - uses: game-ci/unity-test-runner@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          projectPath: CleanProject
+          customImage: unityci/editor:ubuntu-6000.0.54f1-base-3
+          testMode: editmode
+          artifactsPath: package-artifacts
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          checkName: Package test results (6000.0)
+
+      - name: Check that tests ran
+        run: |
+          total=$(grep -o 'total="[0-9]*"' package-artifacts/editmode-results.xml | head -1 | grep -o '[0-9]*')
+          echo "Tests run: ${total:-none}"
+          test "${total:-0}" -gt 0
+
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: package-test-results
+          path: package-artifacts

@@ -60,12 +60,17 @@ namespace WfcStudio.Dev
         }
 
         // Plain grass dominates, so features read as landmarks in open country rather than a patchwork.
-        static IEnumerable<TileDef> Meadow()
+        static IEnumerable<TileDef> Meadow() => Meadow(10f, 5f, 0.5f);
+
+        // The Overworld has busier ground, picked by the user from the WFC Studio window: more tufts and flowers.
+        static IEnumerable<TileDef> OverworldMeadow() => Meadow(5f, 8f, 1f);
+
+        static IEnumerable<TileDef> Meadow(float grass, float tufts, float flowers)
         {
-            yield return Plain("Grass", 0, 0, 10f);
-            yield return Plain("Grass Tufts", 1, 0, 5f);
-            yield return Plain("White Flowers", 7, 40, 0.5f);
-            yield return Plain("Red Flowers", 8, 40, 0.5f);
+            yield return Plain("Grass", 0, 0, grass);
+            yield return Plain("Grass Tufts", 1, 0, tufts);
+            yield return Plain("White Flowers", 7, 40, flowers);
+            yield return Plain("Red Flowers", 8, 40, flowers);
             yield return Plain("Bush", 2, 43, 0.3f);
             yield return Plain("Tree", 3, 40, 0.8f);
         }
@@ -190,7 +195,7 @@ namespace WfcStudio.Dev
             ("Forest", () => Meadow().Concat(Forest())),
             ("Mountain", () => Meadow().Concat(Mountain())),
             ("Castle", () => Meadow().Concat(Castle())),
-            ("Overworld", () => Meadow().Concat(Lake()).Concat(Forest()).Concat(Mountain()).Concat(Castle())),
+            ("Overworld", () => OverworldMeadow().Concat(Lake()).Concat(Forest()).Concat(Mountain()).Concat(Castle())),
         };
 
         [MenuItem("Tools/WFC Studio/Dev/Rebuild Puny World Samples")]

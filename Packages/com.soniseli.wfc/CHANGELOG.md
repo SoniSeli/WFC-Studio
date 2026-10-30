@@ -3,7 +3,9 @@
 All notable changes to this package are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the package uses [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [1.0.0] - 2026-10-30
+
+First release.
 
 ### Added
 
@@ -28,12 +30,15 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - Pinned tiles from a Tilemap: `WfcGenerator.Pins` names a Tilemap that designers paint with the Tile Palette. Before each map, every tile on it inside the map area is pinned at the matching cell. Tiles that aren't in the tile set are ignored with a warning, and pins that conflict fail the map with a warning.
 - WFC Studio window, **Pins** section: add a half-transparent Pins Tilemap above the map, open the Tile Palette aimed at it, clear the pins with Undo, and see how many cells are pinned. **Create Tile Palette** builds a palette asset holding every tile of the tile set.
 - Dependency on `com.unity.2d.tilemap` (the Tile Palette and its editor API).
-- Determinism tests: final-map hashes for fixed rules, sizes and seeds (with backtracking, restarts, wrapping and more than 64 tiles), recorded before the M6 speed-ups. Allocation tests check that solving allocates nothing, counted with Unity's `GC.Alloc` profiler marker.
+- Determinism tests: final-map hashes for fixed rules, sizes and seeds (with backtracking, restarts, wrapping and more than 64 tiles), recorded before the solver speed-ups below. Allocation tests check that solving allocates nothing, counted with Unity's `GC.Alloc` profiler marker.
 - Edit-mode generation: outside Play mode, an `EditorApplication.update` callback steps the solver at the generator's rate and frame budget. Each generate, step-started map and clear is one Undo step, including live generation that runs over many frames.
+- Samples, importable from the Package Manager: **Puny World Tile Sets** (six tile sets made from CC0 pixel art, and a scene with a generator and a Pins Tilemap, with no other package dependencies) and **Live Demo** (the browser demo's scene and UI, which needs the first sample, the Input System and URP).
 
 ### Changed
 
-- Solver speed: the next cell to collapse comes from an indexed min-heap of undecided cells, and only cells whose domains changed are re-keyed, so a step no longer scans the grid. Propagation for tile sets of up to 64 tiles builds each neighbour mask in a single word. On the Overworld sample, a 100×100 map solves in 56 ms instead of 465 ms in the Editor; see `docs/BENCHMARKS.md`. Maps are unchanged: the same rules and seed give the same map as before.
+- The minimum Unity version is 6000.0 (Unity 6 LTS), down from 6000.3. CI installs the package on its own into an empty 6000.0 project and runs its tests there.
+
+- Solver speed: the next cell to collapse comes from an indexed min-heap of undecided cells, and only cells whose domains changed are re-keyed, so a step no longer scans the grid. Propagation for tile sets of up to 64 tiles builds each neighbour mask in a single word. On the Overworld sample, a 100×100 map solves in 58 ms instead of 466 ms in the Editor; see `docs/BENCHMARKS.md`. Maps are unchanged: the same rules and seed give the same map as before.
 - The solver allocates nothing while solving, including during backtracking and restarts. The backtracking trail is sized once for its largest possible length, and restarts reseed the random generator in place (`Pcg32.Reset`).
 - `WfcGenerator` marks its solver and Tilemap work with the `WfcGenerator.Solve` and `WfcGenerator.Redraw` Profiler markers.
 - Socket matching is now a set of connections instead of a single mate. `SocketTileSet.SetConnected(a, b, connected)` replaces `Pair`, and `SocketDefinition` has `ConnectsToSelf` and a `ConnectsTo` list instead of `Mate`. One socket can now face several others, for example a feature `border` that faces `grass` but not another border, which keeps features from touching. `IssueCode.ConflictingSocketPairs` is removed.

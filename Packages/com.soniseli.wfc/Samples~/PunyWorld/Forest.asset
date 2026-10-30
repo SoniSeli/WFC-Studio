@@ -1,0 +1,144 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 873f77f6f79a3d142b97f833b1044841, type: 3}
+  m_Name: Forest
+  m_EditorClassIdentifier: WfcStudio.Runtime::WfcStudio.TileSet
+  _sockets:
+  - _name: grass
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: border
+    _connectsToSelf: 0
+    _connectsTo:
+    - grass
+  - _name: forest-top
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: forest-left
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: forest
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: forest-right
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: forest-bottom
+    _connectsToSelf: 1
+    _connectsTo: []
+  _tiles:
+  - _name: Grass
+    _tile: {fileID: 11400000, guid: c49fa40f1fc31b943aad961f7202bc9d, type: 2}
+    _weight: 10
+    _up: grass
+    _right: grass
+    _down: grass
+    _left: grass
+  - _name: Grass Tufts
+    _tile: {fileID: 11400000, guid: 19e6c8b0618993946a143f9241ad1778, type: 2}
+    _weight: 5
+    _up: grass
+    _right: grass
+    _down: grass
+    _left: grass
+  - _name: White Flowers
+    _tile: {fileID: 11400000, guid: 0364d242a9154ab44af438511c34f8d3, type: 2}
+    _weight: 0.5
+    _up: grass
+    _right: grass
+    _down: grass
+    _left: grass
+  - _name: Red Flowers
+    _tile: {fileID: 11400000, guid: 416642f247814254f80c563da2e18da7, type: 2}
+    _weight: 0.5
+    _up: grass
+    _right: grass
+    _down: grass
+    _left: grass
+  - _name: Bush
+    _tile: {fileID: 11400000, guid: 7432569274e4ccd4f87c83c3a45ffc41, type: 2}
+    _weight: 0.3
+    _up: grass
+    _right: grass
+    _down: grass
+    _left: grass
+  - _name: Tree
+    _tile: {fileID: 11400000, guid: 614a3e36d8419db429f237061dba81cb, type: 2}
+    _weight: 0.8
+    _up: grass
+    _right: grass
+    _down: grass
+    _left: grass
+  - _name: Forest Top Left
+    _tile: {fileID: 11400000, guid: 2621f9222a34bb741b7062f57eb30ff7, type: 2}
+    _weight: 0.14
+    _up: border
+    _right: forest-top
+    _down: forest-left
+    _left: border
+  - _name: Forest Top
+    _tile: {fileID: 11400000, guid: 960c670b3c79f63419e60b72d7605cd1, type: 2}
+    _weight: 0.12
+    _up: border
+    _right: forest-top
+    _down: forest
+    _left: forest-top
+  - _name: Forest Top Right
+    _tile: {fileID: 11400000, guid: 89b21005cc3f8f9428a429a946263c9f, type: 2}
+    _weight: 0.14
+    _up: border
+    _right: border
+    _down: forest-right
+    _left: forest-top
+  - _name: Forest Left
+    _tile: {fileID: 11400000, guid: f80f27639f8a8504496c9c2d1627235e, type: 2}
+    _weight: 0.12
+    _up: forest-left
+    _right: forest
+    _down: forest-left
+    _left: border
+  - _name: Forest Centre
+    _tile: {fileID: 11400000, guid: 9eb9491b22c72ea4d95aa19b186f6c70, type: 2}
+    _weight: 0.4
+    _up: forest
+    _right: forest
+    _down: forest
+    _left: forest
+  - _name: Forest Right
+    _tile: {fileID: 11400000, guid: 0a415609c95ecbe44a9ffc460070071e, type: 2}
+    _weight: 0.12
+    _up: forest-right
+    _right: border
+    _down: forest-right
+    _left: forest
+  - _name: Forest Bottom Left
+    _tile: {fileID: 11400000, guid: 5efe2b5fff531d1478bdb296b61b027d, type: 2}
+    _weight: 0.14
+    _up: forest-left
+    _right: forest-bottom
+    _down: border
+    _left: border
+  - _name: Forest Bottom
+    _tile: {fileID: 11400000, guid: adf862dcaec48da48a9ecf0cada18c5e, type: 2}
+    _weight: 0.12
+    _up: forest
+    _right: forest-bottom
+    _down: border
+    _left: forest-bottom
+  - _name: Forest Bottom Right
+    _tile: {fileID: 11400000, guid: 0c1ea9e2a5d53b8478bd36a6977818bb, type: 2}
+    _weight: 0.14
+    _up: forest-right
+    _right: border
+    _down: border
+    _left: forest-bottom
+  _exceptions: []

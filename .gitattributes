@@ -38,3 +38,9 @@
 *.ogg       filter=lfs diff=lfs merge=lfs -text
 *.mp4       filter=lfs diff=lfs merge=lfs -text
 *.pdf       filter=lfs diff=lfs merge=lfs -text
+
+# Users install the package from a git URL, where Git LFS may be missing: keep the package's images in plain git.
+Packages/com.soniseli.wfc/**/*.png !filter !diff !merge binary
+
+# README images, kept in plain git so GitHub shows them in the rendered README.
+docs/images/** !filter !diff !merge binary

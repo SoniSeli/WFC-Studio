@@ -21,6 +21,7 @@ namespace WfcStudio.Dev
         const string UiFolder = "Assets/Demo/UI";
         const string PanelSettingsPath = UiFolder + "/DemoPanelSettings.asset";
         const string SamplesFolder = "Assets/Samples/PunyWorld";
+        const string SampleScenePath = SamplesFolder + "/Puny World.unity";
 
         // Overworld first: it is the default and shows every biome.
         static readonly string[] TileSetOrder = { "Overworld", "Lake", "Forest", "Mountain", "Castle", "Meadow" };
@@ -88,6 +89,52 @@ namespace WfcStudio.Dev
             EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(ScenePath, true) };
             AssetDatabase.SaveAssets();
             Debug.Log($"Built demo scene at {ScenePath}.");
+        }
+
+        /// <summary>
+        /// The Puny World sample's scene: a generator, its map and an empty Pins Tilemap, and nothing that needs URP or
+        /// the Input System, so it works in any project. Shipped in the package's samples.
+        /// </summary>
+        [MenuItem("Tools/WFC Studio/Dev/Rebuild Sample Scene")]
+        public static void BuildSampleScene()
+        {
+            var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+
+            var camera = new GameObject("Main Camera", typeof(Camera)).GetComponent<Camera>();
+            camera.tag = "MainCamera";
+            camera.orthographic = true;
+            camera.orthographicSize = 15f;
+            camera.clearFlags = CameraClearFlags.SolidColor;
+            camera.backgroundColor = new Color(0.106f, 0.122f, 0.141f);
+            camera.transform.position = new Vector3(0f, 0f, -10f);
+
+            var grid = new GameObject("Grid", typeof(Grid));
+            var map = new GameObject("Map", typeof(Tilemap), typeof(TilemapRenderer));
+            map.transform.SetParent(grid.transform, false);
+            var pins = new GameObject("Pins", typeof(Tilemap), typeof(TilemapRenderer));
+            pins.transform.SetParent(grid.transform, false);
+            pins.GetComponent<Tilemap>().color = new Color(1f, 1f, 1f, 0.5f);
+            pins.GetComponent<TilemapRenderer>().sortingOrder = 1;
+
+            var overworld = AssetDatabase.LoadAssetAtPath<TileSet>($"{SamplesFolder}/Overworld.asset");
+            if (overworld == null)
+                throw new InvalidOperationException("Sample tile sets are missing. Run Rebuild Puny World Samples first.");
+
+            var generatorObject = new GameObject("WFC Generator");
+            var generator = generatorObject.AddComponent<WfcGenerator>();
+            generator.TileSet = overworld;
+            generator.Tilemap = map.GetComponent<Tilemap>();
+            generator.Pins = pins.GetComponent<Tilemap>();
+            generator.Size = new Vector2Int(48, 28);
+            generator.Origin = new Vector3Int(-24, -14, 0);
+            generator.Seed = 1;
+            generator.StepsPerSecond = 300f;
+            generator.GenerateOnStart = true;
+            generatorObject.AddComponent<EntropyHeatmap>().Generator = generator;
+            generatorObject.AddComponent<TilePopAnimation>().Generator = generator;
+
+            EditorSceneManager.SaveScene(scene, SampleScenePath);
+            Debug.Log($"Built sample scene at {SampleScenePath}.");
         }
 
         static PanelSettings GetOrCreatePanelSettings()

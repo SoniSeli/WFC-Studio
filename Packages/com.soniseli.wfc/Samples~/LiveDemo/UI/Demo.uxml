@@ -1,0 +1,32 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <Style src="Demo.uss" />
+    <ui:VisualElement name="panel" class="panel">
+        <ui:Label text="WFC Studio" class="title" />
+        <ui:Label text="Wave Function Collapse map generator" class="subtitle" />
+
+        <ui:DropdownField name="tile-set" label="Tile set" />
+        <ui:SliderInt name="width" label="Width" low-value="8" high-value="96" show-input-field="true" />
+        <ui:SliderInt name="height" label="Height" low-value="8" high-value="64" show-input-field="true" />
+        <ui:VisualElement class="row">
+            <ui:IntegerField name="seed" label="Seed" class="grow" />
+            <ui:Button name="random-seed" text="Random" />
+        </ui:VisualElement>
+        <ui:Toggle name="wrap" label="Wrap edges" />
+
+        <ui:Slider name="speed" label="Speed" low-value="0" high-value="1" />
+        <ui:Label name="speed-value" class="hint" />
+        <ui:Toggle name="heatmap" label="Entropy heatmap" />
+
+        <ui:VisualElement class="row buttons">
+            <ui:Button name="generate" text="Generate" class="primary grow" />
+            <ui:Button name="instant" text="Instant" class="grow" />
+        </ui:VisualElement>
+        <ui:VisualElement class="row buttons">
+            <ui:Button name="pause" text="Pause" class="grow" />
+            <ui:Button name="step" text="Step" class="grow" />
+        </ui:VisualElement>
+
+        <ui:Label name="stats" class="stats" />
+        <ui:Label text="Space pause · N step · G generate · R new seed" class="hint" />
+    </ui:VisualElement>
+</ui:UXML>

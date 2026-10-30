@@ -1,0 +1,63 @@
+.panel {
+    position: absolute;
+    left: 12px;
+    top: 12px;
+    width: 300px;
+    padding: 12px;
+    background-color: rgba(16, 20, 26, 0.9);
+    border-radius: 8px;
+}
+
+.panel Label {
+    color: rgb(222, 226, 232);
+}
+
+.panel .unity-base-field__label {
+    min-width: 84px;
+    color: rgb(190, 197, 207);
+}
+
+.title {
+    font-size: 20px;
+    -unity-font-style: bold;
+}
+
+.subtitle,
+.hint {
+    font-size: 11px;
+    margin-bottom: 8px;
+    white-space: normal;
+}
+
+.panel .hint {
+    color: rgb(150, 158, 170);
+}
+
+.row {
+    flex-direction: row;
+    align-items: center;
+}
+
+.grow {
+    flex-grow: 1;
+}
+
+.buttons {
+    margin-top: 6px;
+}
+
+.buttons Button {
+    height: 28px;
+}
+
+.primary {
+    background-color: rgb(46, 125, 90);
+    color: rgb(255, 255, 255);
+    -unity-font-style: bold;
+}
+
+.stats {
+    margin-top: 10px;
+    margin-bottom: 6px;
+    white-space: normal;
+}

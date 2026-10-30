@@ -1,8 +1,8 @@
 {
   "name": "com.soniseli.wfc",
   "displayName": "WFC Studio",
-  "version": "0.1.0",
-  "unity": "6000.3",
+  "version": "1.0.0",
+  "unity": "6000.0",
   "description": "Designer-friendly procedural map generation using the Wave Function Collapse algorithm (tiled model). Deterministic, seeded solver with live visualization and editor tooling.",
   "keywords": [
     "wfc",
@@ -18,5 +18,17 @@
   "license": "MIT",
   "dependencies": {
     "com.unity.2d.tilemap": "1.0.0"
-  }
+  },
+  "samples": [
+    {
+      "displayName": "Puny World Tile Sets",
+      "description": "Six tile sets made from CC0 pixel art (meadow, lakes, forests, mountains, castles and all of them together), and a scene with a generator to try them in Play mode or the WFC Studio window.",
+      "path": "Samples~/PunyWorld"
+    },
+    {
+      "displayName": "Live Demo",
+      "description": "The interactive web demo: pick a tile set, size and seed, then watch, pause or step the generation. Needs the Puny World Tile Sets sample, the Input System and URP.",
+      "path": "Samples~/LiveDemo"
+    }
+  ]
 }

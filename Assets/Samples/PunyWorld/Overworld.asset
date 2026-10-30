@@ -123,28 +123,28 @@ MonoBehaviour:
   _tiles:
   - _name: Grass
     _tile: {fileID: 11400000, guid: c49fa40f1fc31b943aad961f7202bc9d, type: 2}
-    _weight: 10
+    _weight: 5
     _up: grass
     _right: grass
     _down: grass
     _left: grass
   - _name: Grass Tufts
     _tile: {fileID: 11400000, guid: 19e6c8b0618993946a143f9241ad1778, type: 2}
-    _weight: 5
+    _weight: 8
     _up: grass
     _right: grass
     _down: grass
     _left: grass
   - _name: White Flowers
     _tile: {fileID: 11400000, guid: 0364d242a9154ab44af438511c34f8d3, type: 2}
-    _weight: 0.5
+    _weight: 1
     _up: grass
     _right: grass
     _down: grass
     _left: grass
   - _name: Red Flowers
     _tile: {fileID: 11400000, guid: 416642f247814254f80c563da2e18da7, type: 2}
-    _weight: 0.5
+    _weight: 1
     _up: grass
     _right: grass
     _down: grass

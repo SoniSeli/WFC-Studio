@@ -7,7 +7,7 @@ The code in this repository is MIT licensed (see [LICENSE](LICENSE)). The sample
 - **Author:** merchant-shade
 - **Source:** https://merchant-shade.itch.io/16x16-puny-world
 - **License:** [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/)
-- **Used in:** `Assets/Samples/PunyWorld/punyworld-overworld-tileset.png`, and `Assets/Samples/PunyWorld/PunyWorldTiles.png`, which is generated from it (the tiles the samples use, with 2-pixel extruded edges). The Tile assets in `Assets/Samples/PunyWorld/Tiles/` use the generated sheet.
+- **Used in:** `Assets/Samples/PunyWorld/punyworld-overworld-tileset.png`, and `Assets/Samples/PunyWorld/PunyWorldTiles.png`, which is generated from it (the tiles the samples use, with 2-pixel extruded edges). The Tile assets in `Assets/Samples/PunyWorld/Tiles/` use the generated sheet. The package's **Puny World Tile Sets** sample (`Packages/com.soniseli.wfc/Samples~/PunyWorld/`) ships a copy of the generated sheet and tiles.
 
 Puny World is a rework of **16x16 Mini World Sprites** by Kurt Gabriel Sotelo and octoshrimpy
 (https://merchant-shade.itch.io/16x16-mini-world-sprites), also released under CC0 1.0.

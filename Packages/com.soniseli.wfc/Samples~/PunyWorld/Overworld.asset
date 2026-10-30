@@ -1,0 +1,627 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 873f77f6f79a3d142b97f833b1044841, type: 3}
+  m_Name: Overworld
+  m_EditorClassIdentifier: WfcStudio.Runtime::WfcStudio.TileSet
+  _sockets:
+  - _name: grass
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: border
+    _connectsToSelf: 0
+    _connectsTo:
+    - grass
+  - _name: lake-top
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: lake-left
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: lake
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: lake-right
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: lake-bottom
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: forest-top
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: forest-left
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: forest
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: forest-right
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: forest-bottom
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: mountain-top
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: mountain-left
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: plateau
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: mountain-right
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: mountain-bottom
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: terrace-border
+    _connectsToSelf: 0
+    _connectsTo:
+    - plateau
+  - _name: terrace-top
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: terrace-left
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: summit
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: terrace-right
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: terrace-bottom
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: castle-h00
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: castle-v00
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: castle-h01
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: castle-v10
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: castle-v20
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: castle-h10
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: castle-v01
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: castle-h11
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: castle-v11
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: castle-v21
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: castle-h20
+    _connectsToSelf: 1
+    _connectsTo: []
+  - _name: castle-h21
+    _connectsToSelf: 1
+    _connectsTo: []
+  _tiles:
+  - _name: Grass
+    _tile: {fileID: 11400000, guid: c49fa40f1fc31b943aad961f7202bc9d, type: 2}
+    _weight: 5
+    _up: grass
+    _right: grass
+    _down: grass
+    _left: grass
+  - _name: Grass Tufts
+    _tile: {fileID: 11400000, guid: 19e6c8b0618993946a143f9241ad1778, type: 2}
+    _weight: 8
+    _up: grass
+    _right: grass
+    _down: grass
+    _left: grass
+  - _name: White Flowers
+    _tile: {fileID: 11400000, guid: 0364d242a9154ab44af438511c34f8d3, type: 2}
+    _weight: 1
+    _up: grass
+    _right: grass
+    _down: grass
+    _left: grass
+  - _name: Red Flowers
+    _tile: {fileID: 11400000, guid: 416642f247814254f80c563da2e18da7, type: 2}
+    _weight: 1
+    _up: grass
+    _right: grass
+    _down: grass
+    _left: grass
+  - _name: Bush
+    _tile: {fileID: 11400000, guid: 7432569274e4ccd4f87c83c3a45ffc41, type: 2}
+    _weight: 0.3
+    _up: grass
+    _right: grass
+    _down: grass
+    _left: grass
+  - _name: Tree
+    _tile: {fileID: 11400000, guid: 614a3e36d8419db429f237061dba81cb, type: 2}
+    _weight: 0.8
+    _up: grass
+    _right: grass
+    _down: grass
+    _left: grass
+  - _name: Lake Top Left
+    _tile: {fileID: 11400000, guid: d8708d3d8c0768e4b86754aaa3e2f4e3, type: 2}
+    _weight: 0.06
+    _up: border
+    _right: lake-top
+    _down: lake-left
+    _left: border
+  - _name: Lake Top
+    _tile: {fileID: 11400000, guid: ccd1dd8faf7b97341b1cfc34e02ebfec, type: 2}
+    _weight: 0.15
+    _up: border
+    _right: lake-top
+    _down: lake
+    _left: lake-top
+  - _name: Lake Top Right
+    _tile: {fileID: 11400000, guid: 6799738b5eec813418c84951ea697311, type: 2}
+    _weight: 0.06
+    _up: border
+    _right: border
+    _down: lake-right
+    _left: lake-top
+  - _name: Lake Left
+    _tile: {fileID: 11400000, guid: 6453b1fff3ac6134980b1ded93d2d8b0, type: 2}
+    _weight: 0.15
+    _up: lake-left
+    _right: lake
+    _down: lake-left
+    _left: border
+  - _name: Lake Centre
+    _tile: {fileID: 11400000, guid: 0b7564191826e4042989ecad777c0fda, type: 2}
+    _weight: 0.5
+    _up: lake
+    _right: lake
+    _down: lake
+    _left: lake
+  - _name: Lake Right
+    _tile: {fileID: 11400000, guid: d4cc7f8887d1baf4a9d77006a1771c19, type: 2}
+    _weight: 0.15
+    _up: lake-right
+    _right: border
+    _down: lake-right
+    _left: lake
+  - _name: Lake Bottom Left
+    _tile: {fileID: 11400000, guid: d236c49b0a888d04aa3a82d83b1e6a1a, type: 2}
+    _weight: 0.06
+    _up: lake-left
+    _right: lake-bottom
+    _down: border
+    _left: border
+  - _name: Lake Bottom
+    _tile: {fileID: 11400000, guid: a14593d4579bf07498e71672b4a617f7, type: 2}
+    _weight: 0.15
+    _up: lake
+    _right: lake-bottom
+    _down: border
+    _left: lake-bottom
+  - _name: Lake Bottom Right
+    _tile: {fileID: 11400000, guid: b2d09c9f56d6e0945a60fd2932914e70, type: 2}
+    _weight: 0.06
+    _up: lake-right
+    _right: border
+    _down: border
+    _left: lake-bottom
+  - _name: Forest Top Left
+    _tile: {fileID: 11400000, guid: 2621f9222a34bb741b7062f57eb30ff7, type: 2}
+    _weight: 0.14
+    _up: border
+    _right: forest-top
+    _down: forest-left
+    _left: border
+  - _name: Forest Top
+    _tile: {fileID: 11400000, guid: 960c670b3c79f63419e60b72d7605cd1, type: 2}
+    _weight: 0.12
+    _up: border
+    _right: forest-top
+    _down: forest
+    _left: forest-top
+  - _name: Forest Top Right
+    _tile: {fileID: 11400000, guid: 89b21005cc3f8f9428a429a946263c9f, type: 2}
+    _weight: 0.14
+    _up: border
+    _right: border
+    _down: forest-right
+    _left: forest-top
+  - _name: Forest Left
+    _tile: {fileID: 11400000, guid: f80f27639f8a8504496c9c2d1627235e, type: 2}
+    _weight: 0.12
+    _up: forest-left
+    _right: forest
+    _down: forest-left
+    _left: border
+  - _name: Forest Centre
+    _tile: {fileID: 11400000, guid: 9eb9491b22c72ea4d95aa19b186f6c70, type: 2}
+    _weight: 0.4
+    _up: forest
+    _right: forest
+    _down: forest
+    _left: forest
+  - _name: Forest Right
+    _tile: {fileID: 11400000, guid: 0a415609c95ecbe44a9ffc460070071e, type: 2}
+    _weight: 0.12
+    _up: forest-right
+    _right: border
+    _down: forest-right
+    _left: forest
+  - _name: Forest Bottom Left
+    _tile: {fileID: 11400000, guid: 5efe2b5fff531d1478bdb296b61b027d, type: 2}
+    _weight: 0.14
+    _up: forest-left
+    _right: forest-bottom
+    _down: border
+    _left: border
+  - _name: Forest Bottom
+    _tile: {fileID: 11400000, guid: adf862dcaec48da48a9ecf0cada18c5e, type: 2}
+    _weight: 0.12
+    _up: forest
+    _right: forest-bottom
+    _down: border
+    _left: forest-bottom
+  - _name: Forest Bottom Right
+    _tile: {fileID: 11400000, guid: 0c1ea9e2a5d53b8478bd36a6977818bb, type: 2}
+    _weight: 0.14
+    _up: forest-right
+    _right: border
+    _down: border
+    _left: forest-bottom
+  - _name: Mountain Top Left
+    _tile: {fileID: 11400000, guid: 9a214feba5c14ae448083a5e7592da56, type: 2}
+    _weight: 0.07
+    _up: border
+    _right: mountain-top
+    _down: mountain-left
+    _left: border
+  - _name: Mountain Top
+    _tile: {fileID: 11400000, guid: beeaa13e46063f040bbcd09508fc069c, type: 2}
+    _weight: 0.16
+    _up: border
+    _right: mountain-top
+    _down: plateau
+    _left: mountain-top
+  - _name: Mountain Top Right
+    _tile: {fileID: 11400000, guid: a6390e1a7250706459c068e887670851, type: 2}
+    _weight: 0.07
+    _up: border
+    _right: border
+    _down: mountain-right
+    _left: mountain-top
+  - _name: Mountain Left
+    _tile: {fileID: 11400000, guid: 14fb695207da27645a8de0a3a3b4766a, type: 2}
+    _weight: 0.16
+    _up: mountain-left
+    _right: plateau
+    _down: mountain-left
+    _left: border
+  - _name: Mountain Centre
+    _tile: {fileID: 11400000, guid: 1c6f10fb8e9608c45a1bb3b8752bfe5e, type: 2}
+    _weight: 0.5
+    _up: plateau
+    _right: plateau
+    _down: plateau
+    _left: plateau
+  - _name: Mountain Right
+    _tile: {fileID: 11400000, guid: 6b720d3df4815cd41aab90997aa3c4a1, type: 2}
+    _weight: 0.16
+    _up: mountain-right
+    _right: border
+    _down: mountain-right
+    _left: plateau
+  - _name: Mountain Bottom Left
+    _tile: {fileID: 11400000, guid: 6f7474aa13a17c44ab2d7fdd58b2476e, type: 2}
+    _weight: 0.07
+    _up: mountain-left
+    _right: mountain-bottom
+    _down: border
+    _left: border
+  - _name: Mountain Bottom
+    _tile: {fileID: 11400000, guid: 107be6e573b3f674dbf3abcd9778d5c9, type: 2}
+    _weight: 0.16
+    _up: plateau
+    _right: mountain-bottom
+    _down: border
+    _left: mountain-bottom
+  - _name: Mountain Bottom Right
+    _tile: {fileID: 11400000, guid: 6a9e2ae72d5e4f448b5be2ffa21c2e82, type: 2}
+    _weight: 0.07
+    _up: mountain-right
+    _right: border
+    _down: border
+    _left: mountain-bottom
+  - _name: Mountain Inner Top Left
+    _tile: {fileID: 11400000, guid: 50c5d16ce5be3084193917a5016a26ce, type: 2}
+    _weight: 0.01
+    _up: mountain-left
+    _right: plateau
+    _down: plateau
+    _left: mountain-top
+  - _name: Mountain Inner Top Right
+    _tile: {fileID: 11400000, guid: 998020e0dad0d924a90463a490d15328, type: 2}
+    _weight: 0.01
+    _up: mountain-right
+    _right: mountain-top
+    _down: plateau
+    _left: plateau
+  - _name: Mountain Inner Bottom Left
+    _tile: {fileID: 11400000, guid: 10cddb9ce62209346b3132e9501a6283, type: 2}
+    _weight: 0.01
+    _up: plateau
+    _right: plateau
+    _down: mountain-left
+    _left: mountain-bottom
+  - _name: Mountain Inner Bottom Right
+    _tile: {fileID: 11400000, guid: 8ee1eddbab8c83344997e85e18a0293e, type: 2}
+    _weight: 0.01
+    _up: plateau
+    _right: mountain-bottom
+    _down: mountain-right
+    _left: plateau
+  - _name: Plateau Tufts
+    _tile: {fileID: 11400000, guid: 4baec7d1833ef604cbab98d8a5a72349, type: 2}
+    _weight: 0.3
+    _up: plateau
+    _right: plateau
+    _down: plateau
+    _left: plateau
+  - _name: Plateau Flowers
+    _tile: {fileID: 11400000, guid: 7b010a8e590e7254e944875d7a8f5e28, type: 2}
+    _weight: 0.1
+    _up: plateau
+    _right: plateau
+    _down: plateau
+    _left: plateau
+  - _name: Plateau Tree
+    _tile: {fileID: 11400000, guid: af52ffa26e662c74798751cc05987342, type: 2}
+    _weight: 0.15
+    _up: plateau
+    _right: plateau
+    _down: plateau
+    _left: plateau
+  - _name: Plateau Bush
+    _tile: {fileID: 11400000, guid: 47c862feae2041844a626a78359c71d9, type: 2}
+    _weight: 0.08
+    _up: plateau
+    _right: plateau
+    _down: plateau
+    _left: plateau
+  - _name: Terrace Top Left
+    _tile: {fileID: 11400000, guid: 9d01e8b3246ffc544812b82b3d3e9204, type: 2}
+    _weight: 0.05
+    _up: terrace-border
+    _right: terrace-top
+    _down: terrace-left
+    _left: terrace-border
+  - _name: Terrace Top
+    _tile: {fileID: 11400000, guid: 2181a05436a5c3141ad1bac7d8086fcc, type: 2}
+    _weight: 0.14
+    _up: terrace-border
+    _right: terrace-top
+    _down: summit
+    _left: terrace-top
+  - _name: Terrace Top Right
+    _tile: {fileID: 11400000, guid: 10758a6747d36fe45a0e5a0a26ff37d9, type: 2}
+    _weight: 0.05
+    _up: terrace-border
+    _right: terrace-border
+    _down: terrace-right
+    _left: terrace-top
+  - _name: Terrace Left
+    _tile: {fileID: 11400000, guid: 0bc01a1c357097c43b0738dd3e8afe9b, type: 2}
+    _weight: 0.14
+    _up: terrace-left
+    _right: summit
+    _down: terrace-left
+    _left: terrace-border
+  - _name: Terrace Centre
+    _tile: {fileID: 11400000, guid: 69d5c5d935780724dbb4bdbee0cabd82, type: 2}
+    _weight: 0.4
+    _up: summit
+    _right: summit
+    _down: summit
+    _left: summit
+  - _name: Terrace Right
+    _tile: {fileID: 11400000, guid: 1bcbecf72db8fa64bad2be281cec684b, type: 2}
+    _weight: 0.14
+    _up: terrace-right
+    _right: terrace-border
+    _down: terrace-right
+    _left: summit
+  - _name: Terrace Bottom Left
+    _tile: {fileID: 11400000, guid: 464802722a3c2f543be58fafe9148f22, type: 2}
+    _weight: 0.05
+    _up: terrace-left
+    _right: terrace-bottom
+    _down: terrace-border
+    _left: terrace-border
+  - _name: Terrace Bottom
+    _tile: {fileID: 11400000, guid: 176f9b26bc391e84db477231a1d18280, type: 2}
+    _weight: 0.14
+    _up: summit
+    _right: terrace-bottom
+    _down: terrace-border
+    _left: terrace-bottom
+  - _name: Terrace Bottom Right
+    _tile: {fileID: 11400000, guid: b1835243e34aa2a4682f4fe623b76684, type: 2}
+    _weight: 0.05
+    _up: terrace-right
+    _right: terrace-border
+    _down: terrace-border
+    _left: terrace-bottom
+  - _name: Summit Tufts
+    _tile: {fileID: 11400000, guid: 7de718e42aae91144a708f8f2c0a00a2, type: 2}
+    _weight: 0.2
+    _up: summit
+    _right: summit
+    _down: summit
+    _left: summit
+  - _name: Summit Tree
+    _tile: {fileID: 11400000, guid: f97e54bb1bf1cee4789d5512dca404b6, type: 2}
+    _weight: 0.1
+    _up: summit
+    _right: summit
+    _down: summit
+    _left: summit
+  - _name: Castle Top Left
+    _tile: {fileID: 11400000, guid: de49f4be2f96155479bed2154d5d486d, type: 2}
+    _weight: 0.03
+    _up: border
+    _right: castle-h00
+    _down: castle-v00
+    _left: border
+  - _name: Castle Top
+    _tile: {fileID: 11400000, guid: eb4448b93dfea3240bc0a010f26f3f30, type: 2}
+    _weight: 0.03
+    _up: border
+    _right: castle-h01
+    _down: castle-v10
+    _left: castle-h00
+  - _name: Castle Top Right
+    _tile: {fileID: 11400000, guid: 98b2ef0f04710a54ebeb9da4156993e6, type: 2}
+    _weight: 0.03
+    _up: border
+    _right: border
+    _down: castle-v20
+    _left: castle-h01
+  - _name: Castle Left
+    _tile: {fileID: 11400000, guid: 5cc53c8d4db03db4db29c64613931aa1, type: 2}
+    _weight: 0.03
+    _up: castle-v00
+    _right: castle-h10
+    _down: castle-v01
+    _left: border
+  - _name: Castle Centre
+    _tile: {fileID: 11400000, guid: 06ff73c539b61a64d9da594c6bc31c71, type: 2}
+    _weight: 0.03
+    _up: castle-v10
+    _right: castle-h11
+    _down: castle-v11
+    _left: castle-h10
+  - _name: Castle Right
+    _tile: {fileID: 11400000, guid: b8faf1211ac4831488c87f6293005b5a, type: 2}
+    _weight: 0.03
+    _up: castle-v20
+    _right: border
+    _down: castle-v21
+    _left: castle-h11
+  - _name: Castle Bottom Left
+    _tile: {fileID: 11400000, guid: e8fad8e2a21f817409ed41a59a803bcf, type: 2}
+    _weight: 0.03
+    _up: castle-v01
+    _right: castle-h20
+    _down: border
+    _left: border
+  - _name: Castle Bottom
+    _tile: {fileID: 11400000, guid: fb204407d858dfa40a67a550a66510bf, type: 2}
+    _weight: 0.03
+    _up: castle-v11
+    _right: castle-h21
+    _down: border
+    _left: castle-h20
+  - _name: Castle Bottom Right
+    _tile: {fileID: 11400000, guid: 07abf3876c97d774fbbf9b0faeec5c1e, type: 2}
+    _weight: 0.03
+    _up: castle-v21
+    _right: border
+    _down: border
+    _left: castle-h21
+  _exceptions:
+  - _kind: 0
+    _tile: {fileID: 11400000, guid: d8708d3d8c0768e4b86754aaa3e2f4e3, type: 2}
+    _direction: 2
+    _neighbour: {fileID: 11400000, guid: 6799738b5eec813418c84951ea697311, type: 2}
+  - _kind: 0
+    _tile: {fileID: 11400000, guid: 6453b1fff3ac6134980b1ded93d2d8b0, type: 2}
+    _direction: 2
+    _neighbour: {fileID: 11400000, guid: d4cc7f8887d1baf4a9d77006a1771c19, type: 2}
+  - _kind: 0
+    _tile: {fileID: 11400000, guid: d236c49b0a888d04aa3a82d83b1e6a1a, type: 2}
+    _direction: 2
+    _neighbour: {fileID: 11400000, guid: b2d09c9f56d6e0945a60fd2932914e70, type: 2}
+  - _kind: 0
+    _tile: {fileID: 11400000, guid: d8708d3d8c0768e4b86754aaa3e2f4e3, type: 2}
+    _direction: 3
+    _neighbour: {fileID: 11400000, guid: d236c49b0a888d04aa3a82d83b1e6a1a, type: 2}
+  - _kind: 0
+    _tile: {fileID: 11400000, guid: ccd1dd8faf7b97341b1cfc34e02ebfec, type: 2}
+    _direction: 3
+    _neighbour: {fileID: 11400000, guid: a14593d4579bf07498e71672b4a617f7, type: 2}
+  - _kind: 0
+    _tile: {fileID: 11400000, guid: 6799738b5eec813418c84951ea697311, type: 2}
+    _direction: 3
+    _neighbour: {fileID: 11400000, guid: b2d09c9f56d6e0945a60fd2932914e70, type: 2}
+  - _kind: 0
+    _tile: {fileID: 11400000, guid: 9a214feba5c14ae448083a5e7592da56, type: 2}
+    _direction: 2
+    _neighbour: {fileID: 11400000, guid: a6390e1a7250706459c068e887670851, type: 2}
+  - _kind: 0
+    _tile: {fileID: 11400000, guid: 14fb695207da27645a8de0a3a3b4766a, type: 2}
+    _direction: 2
+    _neighbour: {fileID: 11400000, guid: 6b720d3df4815cd41aab90997aa3c4a1, type: 2}
+  - _kind: 0
+    _tile: {fileID: 11400000, guid: 6f7474aa13a17c44ab2d7fdd58b2476e, type: 2}
+    _direction: 2
+    _neighbour: {fileID: 11400000, guid: 6a9e2ae72d5e4f448b5be2ffa21c2e82, type: 2}
+  - _kind: 0
+    _tile: {fileID: 11400000, guid: 9a214feba5c14ae448083a5e7592da56, type: 2}
+    _direction: 3
+    _neighbour: {fileID: 11400000, guid: 6f7474aa13a17c44ab2d7fdd58b2476e, type: 2}
+  - _kind: 0
+    _tile: {fileID: 11400000, guid: beeaa13e46063f040bbcd09508fc069c, type: 2}
+    _direction: 3
+    _neighbour: {fileID: 11400000, guid: 107be6e573b3f674dbf3abcd9778d5c9, type: 2}
+  - _kind: 0
+    _tile: {fileID: 11400000, guid: a6390e1a7250706459c068e887670851, type: 2}
+    _direction: 3
+    _neighbour: {fileID: 11400000, guid: 6a9e2ae72d5e4f448b5be2ffa21c2e82, type: 2}
+  - _kind: 0
+    _tile: {fileID: 11400000, guid: 9d01e8b3246ffc544812b82b3d3e9204, type: 2}
+    _direction: 2
+    _neighbour: {fileID: 11400000, guid: 10758a6747d36fe45a0e5a0a26ff37d9, type: 2}
+  - _kind: 0
+    _tile: {fileID: 11400000, guid: 0bc01a1c357097c43b0738dd3e8afe9b, type: 2}
+    _direction: 2
+    _neighbour: {fileID: 11400000, guid: 1bcbecf72db8fa64bad2be281cec684b, type: 2}
+  - _kind: 0
+    _tile: {fileID: 11400000, guid: 464802722a3c2f543be58fafe9148f22, type: 2}
+    _direction: 2
+    _neighbour: {fileID: 11400000, guid: b1835243e34aa2a4682f4fe623b76684, type: 2}
+  - _kind: 0
+    _tile: {fileID: 11400000, guid: 9d01e8b3246ffc544812b82b3d3e9204, type: 2}
+    _direction: 3
+    _neighbour: {fileID: 11400000, guid: 464802722a3c2f543be58fafe9148f22, type: 2}
+  - _kind: 0
+    _tile: {fileID: 11400000, guid: 2181a05436a5c3141ad1bac7d8086fcc, type: 2}
+    _direction: 3
+    _neighbour: {fileID: 11400000, guid: 176f9b26bc391e84db477231a1d18280, type: 2}
+  - _kind: 0
+    _tile: {fileID: 11400000, guid: 10758a6747d36fe45a0e5a0a26ff37d9, type: 2}
+    _direction: 3
+    _neighbour: {fileID: 11400000, guid: b1835243e34aa2a4682f4fe623b76684, type: 2}
+  - _kind: 0
+    _tile: {fileID: 11400000, guid: 614a3e36d8419db429f237061dba81cb, type: 2}
+    _direction: 0
+    _neighbour: {fileID: 11400000, guid: 614a3e36d8419db429f237061dba81cb, type: 2}

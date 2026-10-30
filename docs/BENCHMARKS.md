@@ -26,18 +26,18 @@ Solve time, median:
 
 | Tile set | Size | Before | After | Speed-up |
 |---|---|---|---|---|
-| Lake | 20×20 | 1.3 ms | 0.5 ms | 2.5× |
-| Lake | 50×50 | 28.8 ms | 3.2 ms | 9.1× |
-| Lake | 100×100 | 400.6 ms | 13.0 ms | 31× |
-| Overworld | 20×20 | 3.7 ms | 1.9 ms | 1.9× |
-| Overworld | 50×50 | 44.9 ms | 13.3 ms | 3.4× |
-| Overworld | 100×100 | 465.1 ms | 55.7 ms | 8.4× |
+| Lake | 20×20 | 1.3 ms | 0.5 ms | 2.7× |
+| Lake | 50×50 | 29.6 ms | 3.3 ms | 9.0× |
+| Lake | 100×100 | 399.5 ms | 13.5 ms | 30× |
+| Overworld | 20×20 | 3.9 ms | 1.9 ms | 2.1× |
+| Overworld | 50×50 | 45.8 ms | 13.6 ms | 3.4× |
+| Overworld | 100×100 | 466.3 ms | 57.7 ms | 8.1× |
 
-Setup at 100×100: Lake 2.9 → 1.8 ms, Overworld 7.3 → 6.1 ms.
+Setup at 100×100: Lake 2.6 → 1.8 ms, Overworld 8.1 → 5.5 ms.
 
 GC allocations while solving: 3 to 5 per map before, **0** after, at every size.
 
-*Before* is the solver as of commit `19b342e`, and *after* is the M6 solver. Both ran on the same machine, in the same session, on the same tile set assets.
+*Before* is the solver as of commit `19b342e`, and *after* is the solver in version 1.0.0. Both ran on the same machine, in the same session, on the sample tile sets of version 1.0.0.
 
 ## What changed
 
